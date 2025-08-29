@@ -17,22 +17,18 @@ class BatteryUtils {
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom( // cor de destaque
+              textStyle: TextStyle(fontSize: 12),
+            ),
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text("No, gracias"),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 94, 39, 34), // cor de destaque
-              foregroundColor: Colors.white,
-              textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 5),
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+            style: ElevatedButton.styleFrom( // cor de destaque
+              textStyle: TextStyle(fontSize: 12),
             ),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Abrir configuração"),
+            child: const Text("Abrir configuración"),
           ),
         ],
       ),
