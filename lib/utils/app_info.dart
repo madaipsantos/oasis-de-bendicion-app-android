@@ -1,0 +1,26 @@
+import 'package:package_info_plus/package_info_plus.dart';
+
+class AppInfo {
+  // Variável estática para armazenar a versão uma vez que ela é carregada
+  static String? _appVersion;
+
+  // Método assíncrono para obter a versão do aplicativo
+  static Future<String> getAppVersion() async {
+    // Se a versão já foi carregada, retorna-a imediatamente
+    if (_appVersion != null) {
+      return _appVersion!;
+    }
+
+    try {
+      // Obtém as informações do pacote
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      // Armazena e retorna a versão do aplicativo
+      _appVersion = packageInfo.version;
+      return _appVersion!;
+    } catch (e) {
+      // Em caso de erro, imprime o erro e retorna uma string indicando o problema
+      print('Erro ao obter informações do pacote: $e');
+      return 'Desconhecida'; // Ou "Erro ao carregar versão"
+    }
+  }
+}
