@@ -20,6 +20,11 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool get streamingAvailable => _streamingAvailable;
   bool _streamingError = false;
   bool get streamingError => _streamingError;
+  
+  // Variáveis para controle de estado dos listeners
+  bool _triedToLoad = false;
+  bool _stoppedManually = false;
+  bool _errorHandled = false;
 
   AudioPlayerProvider() {
     WidgetsBinding.instance.addObserver(this);
@@ -46,8 +51,8 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> preparePlayer() async {
     // Sempre resetar estado e listeners
-  _streamingAvailable = true;
-  _streamingError = false;
+    _streamingAvailable = true;
+    _streamingError = false;
     _isLoading = true;
     _initialized = false;
     _isFirstPlay = true;
@@ -71,59 +76,93 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> _initializePlayer() async {
-      // Listener para eventos de erro do player
-      bool triedToLoad = false;
-      bool stoppedManually = false;
-      _subscriptions.add(_player.playbackEventStream.listen((event) {
+    if (_initialized) return;
+    _initialized = true;
+    
+    // Reseta as variáveis de controle
+    _triedToLoad = false;
+    _stoppedManually = false;
+    _errorHandled = false;
+    
+    // Configura listeners ANTES de tentar carregar o audio source
+    _subscriptions.add(_player.playbackEventStream.listen(
+      (event) {
         // Detecta parada manual
-        if (event.processingState == ProcessingState.idle && _isPlaying == false && triedToLoad) {
-          stoppedManually = true;
+        if (event.processingState == ProcessingState.idle && _isPlaying == false && _triedToLoad) {
+          _stoppedManually = true;
         }
         // Só considera erro de streaming se já tentou carregar o áudio e não foi parada manual
         if ((event.processingState == ProcessingState.loading || event.processingState == ProcessingState.buffering)) {
-          triedToLoad = true;
+          _triedToLoad = true;
         }
-        if (triedToLoad && event.processingState == ProcessingState.idle && _streamingAvailable && !stoppedManually) {
+        if (_triedToLoad && event.processingState == ProcessingState.idle && _streamingAvailable && !_stoppedManually) {
           _streamingAvailable = false;
           _streamingError = true;
           _isLoading = false;
           notifyListeners();
         }
         // Se está em idle por parada manual, não é erro
-        if (stoppedManually) {
+        if (_stoppedManually) {
           _streamingError = false;
           notifyListeners();
         }
-      }));
-    if (_initialized) return;
-    _initialized = true;
-    try {
-      final session = await AudioSession.instance;
-      await session.configure(AudioSessionConfiguration.music());
-      _isLoading = true;
-      notifyListeners();
-      await _player.setAudioSource(
-        AudioSource.uri(Uri.parse('https://stream-152.zeno.fm/5qrh7beqizzvv')),
-      );
-      _isLoading = false;
-      _streamingAvailable = true;
-      notifyListeners();
+      },
+      onError: (error) {
+        if (!_errorHandled) {
+          _errorHandled = true;
+          _streamingAvailable = false;
+          _streamingError = true;
+          _isLoading = false;
+          notifyListeners();
+        }
+      },
+    ));
 
-      _subscriptions.add(_player.playerStateStream.listen((state) {
-        final playing = state.playing;
-        final loading = state.processingState == ProcessingState.loading ||
-            state.processingState == ProcessingState.buffering;
+    _subscriptions.add(_player.playerStateStream.listen((state) {
+      final playing = state.playing;
+      final loading = state.processingState == ProcessingState.loading ||
+          state.processingState == ProcessingState.buffering;
+      
+      // Só atualiza loading se não houver erro de streaming
+      if (!_streamingError) {
         if (_isPlaying != playing || _isLoading != loading) {
           _isPlaying = playing;
           _isLoading = loading;
           notifyListeners();
         }
-        // Detecta erro de streaming (por exemplo, URL inválida, 404, etc)
-        if (state.processingState == ProcessingState.idle && _streamingAvailable) {
-          _streamingAvailable = false;
+      } else {
+        // Se há erro de streaming, mantém loading como false
+        if (_isPlaying != playing || _isLoading != false) {
+          _isPlaying = playing;
+          _isLoading = false;
           notifyListeners();
         }
-      }));
+      }
+      
+      // REMOVIDO: Não detecta erro no playerStateStream para evitar falsos positivos
+      // O erro será detectado apenas no playbackEventStream.onError e nas condições específicas
+    }));
+
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(AudioSessionConfiguration.music());
+      _isLoading = true;
+      notifyListeners();
+      try {
+        await _player.setAudioSource(
+          AudioSource.uri(Uri.parse('https://stream-152.zeno.fm/5qrh7beqizzvv')),
+        );
+        _isLoading = false;
+        _streamingAvailable = true;
+        _streamingError = false;
+        notifyListeners();
+      } catch (e) {
+        _isLoading = false;
+        _streamingAvailable = false;
+        _streamingError = true;
+        notifyListeners();
+        return;
+      }
 
       _subscriptions.add(_player.icyMetadataStream.listen((icy) {
         final title = icy?.info?.title;
