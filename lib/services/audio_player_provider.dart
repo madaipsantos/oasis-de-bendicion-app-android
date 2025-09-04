@@ -5,8 +5,16 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 
+// Constants
+class RadioConstants {
+  static const String streamUrl = 'https://stream-152.zeno.fm/5qrh7beqizzvv';
+  static const String defaultTitle = 'Oasis Rádio';
+  static const String radioName = 'Rádio Oasis';
+  static const String artistName = 'Oasis de Bendición';
+}
+
 class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
-  String _currentTitle = 'Oasis Rádio';
+  String _currentTitle = RadioConstants.defaultTitle;
   String get currentTitle => _currentTitle;
   AudioPlayer _player = AudioPlayer();
   List<StreamSubscription> _subscriptions = [];
@@ -20,10 +28,14 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool get streamingAvailable => _streamingAvailable;
   bool _streamingError = false;
   bool get streamingError => _streamingError;
+  
+  // Variáveis para controle de estado dos listeners
+  bool _triedToLoad = false;
+  bool _stoppedManually = false;
+  bool _errorHandled = false;
 
   AudioPlayerProvider() {
     WidgetsBinding.instance.addObserver(this);
-    // Removido qualquer inicialização assíncrona aqui
   }
 
   Future<void> initAudioService() async {
@@ -46,8 +58,8 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> preparePlayer() async {
     // Sempre resetar estado e listeners
-  _streamingAvailable = true;
-  _streamingError = false;
+    _streamingAvailable = true;
+    _streamingError = false;
     _isLoading = true;
     _initialized = false;
     _isFirstPlay = true;
@@ -71,87 +83,153 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> _initializePlayer() async {
-      // Listener para eventos de erro do player
-      bool triedToLoad = false;
-      bool stoppedManually = false;
-      _subscriptions.add(_player.playbackEventStream.listen((event) {
-        // Detecta parada manual
-        if (event.processingState == ProcessingState.idle && _isPlaying == false && triedToLoad) {
-          stoppedManually = true;
-        }
-        // Só considera erro de streaming se já tentou carregar o áudio e não foi parada manual
-        if ((event.processingState == ProcessingState.loading || event.processingState == ProcessingState.buffering)) {
-          triedToLoad = true;
-        }
-        if (triedToLoad && event.processingState == ProcessingState.idle && _streamingAvailable && !stoppedManually) {
-          _streamingAvailable = false;
-          _streamingError = true;
-          _isLoading = false;
-          notifyListeners();
-        }
-        // Se está em idle por parada manual, não é erro
-        if (stoppedManually) {
-          _streamingError = false;
-          notifyListeners();
-        }
-      }));
     if (_initialized) return;
     _initialized = true;
-    try {
-      final session = await AudioSession.instance;
-      await session.configure(AudioSessionConfiguration.music());
-      _isLoading = true;
-      notifyListeners();
-      await _player.setAudioSource(
-        AudioSource.uri(Uri.parse('https://stream-152.zeno.fm/5qrh7beqizzvv')),
-      );
-      _isLoading = false;
-      _streamingAvailable = true;
-      notifyListeners();
+    
+    _resetControlVariables();
+    _setupPlayerListeners();
+    await _configureAudioSession();
+    await _setAudioSource();
+    _setupMetadataListener();
+  }
 
-      _subscriptions.add(_player.playerStateStream.listen((state) {
-        final playing = state.playing;
-        final loading = state.processingState == ProcessingState.loading ||
-            state.processingState == ProcessingState.buffering;
-        if (_isPlaying != playing || _isLoading != loading) {
-          _isPlaying = playing;
-          _isLoading = loading;
-          notifyListeners();
-        }
-        // Detecta erro de streaming (por exemplo, URL inválida, 404, etc)
-        if (state.processingState == ProcessingState.idle && _streamingAvailable) {
-          _streamingAvailable = false;
-          notifyListeners();
-        }
-      }));
+  void _resetControlVariables() {
+    _triedToLoad = false;
+    _stoppedManually = false;
+    _errorHandled = false;
+  }
 
-      _subscriptions.add(_player.icyMetadataStream.listen((icy) {
-        final title = icy?.info?.title;
-        if (title != null) {
-          _currentTitle = title;
-          (_audioHandler as RadioAudioHandler).updateCurrentMediaItem(title: title);
-          notifyListeners();
-        }
-      }));
-    } catch (e) {
-      _isLoading = false;
-      _streamingAvailable = false;
-      notifyListeners();
+  void _setupPlayerListeners() {
+    _subscriptions.add(_player.playbackEventStream.listen(
+      _handlePlaybackEvent,
+      onError: _handlePlaybackError,
+    ));
+
+    _subscriptions.add(_player.playerStateStream.listen(_handlePlayerStateChange));
+  }
+
+  void _handlePlaybackEvent(PlaybackEvent event) {
+    // Detecta parada manual
+    if (event.processingState == ProcessingState.idle && _isPlaying == false && _triedToLoad) {
+      _stoppedManually = true;
+    }
+    
+    // Marca que tentou carregar
+    if ((event.processingState == ProcessingState.loading || event.processingState == ProcessingState.buffering)) {
+      _triedToLoad = true;
+    }
+    
+    // Detecta erro de streaming
+    if (_triedToLoad && event.processingState == ProcessingState.idle && _streamingAvailable && !_stoppedManually) {
+      _setStreamingError();
+    }
+    
+    // Limpa erro se foi parada manual
+    if (_stoppedManually) {
+      _clearStreamingError();
     }
   }
+
+  void _handlePlaybackError(dynamic error) {
+    if (!_errorHandled) {
+      _errorHandled = true;
+      _setStreamingError();
+    }
+  }
+
+  void _handlePlayerStateChange(PlayerState state) {
+    final playing = state.playing;
+    final loading = state.processingState == ProcessingState.loading ||
+        state.processingState == ProcessingState.buffering;
+    
+    // Só atualiza loading se não houver erro de streaming
+    if (!_streamingError) {
+      if (_isPlaying != playing || _isLoading != loading) {
+        _isPlaying = playing;
+        _isLoading = loading;
+        notifyListeners();
+      }
+    } else {
+      // Se há erro de streaming, mantém loading como false
+      if (_isPlaying != playing || _isLoading != false) {
+        _isPlaying = playing;
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> _configureAudioSession() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration.music());
+    _isLoading = true;
+    notifyListeners();
+  }
+
+  Future<void> _setAudioSource() async {
+    try {
+      await _player.setAudioSource(
+        AudioSource.uri(Uri.parse(RadioConstants.streamUrl)),
+      );
+      _setStreamingSuccess();
+    } catch (e) {
+      _setStreamingError();
+      return;
+    }
+  }
+
+  void _setupMetadataListener() {
+    _subscriptions.add(_player.icyMetadataStream.listen((icy) {
+      final title = icy?.info?.title;
+      if (title != null) {
+        _currentTitle = title;
+        (_audioHandler as RadioAudioHandler).updateCurrentMediaItem(title: title);
+        notifyListeners();
+      }
+    }));
+  }
+
+  // State Management Methods
+  void _setStreamingError() {
+    _streamingAvailable = false;
+    _streamingError = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void _clearStreamingError() {
+    _streamingError = false;
+    notifyListeners();
+  }
+
+  void _setStreamingSuccess() {
+    _isLoading = false;
+    _streamingAvailable = true;
+    _streamingError = false;
+    notifyListeners();
+  }
+
+  void _setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+
+  // Helper Methods
+  bool get _canPlay => _streamingAvailable && !_streamingError;
 
   void togglePlayPause() {
     if (_isPlaying) {
       _audioHandler?.pause();
     } else {
-      // Exibe loading durante a reconexão
-      _isLoading = true;
-      notifyListeners();
-      if (_isFirstPlay) {
-        _player.setVolume(1.0);
-        _isFirstPlay = false;
+      if (_canPlay) {
+        // Exibe loading durante a reconexão
+        _setLoading(true);
+        if (_isFirstPlay) {
+          _player.setVolume(1.0);
+          _isFirstPlay = false;
+        }
+        _audioHandler?.play();
       }
-      _audioHandler?.play();
     }
   }
 
@@ -233,17 +311,17 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
 
   void _setInitialMediaItem() {
     mediaItem.add(MediaItem(
-      id: 'https://stream-152.zeno.fm/5qrh7beqizzvv',
-      album: 'Rádio Oasis',
-      title: 'Oasis Rádio',
-      artist: 'Oasis de Bendición',
+      id: RadioConstants.streamUrl,
+      album: RadioConstants.radioName,
+      title: RadioConstants.defaultTitle,
+      artist: RadioConstants.artistName,
     ));
   }
 
   void updateCurrentMediaItem({required String title}) {
     mediaItem.add(MediaItem(
-      id: 'https://stream-152.zeno.fm/5qrh7beqizzvv',
-      artist: title.isNotEmpty ? title : 'Oasis Rádio',
+      id: RadioConstants.streamUrl,
+      artist: title.isNotEmpty ? title : RadioConstants.defaultTitle,
       title: 'Oasis Radio',
     ));
   }
