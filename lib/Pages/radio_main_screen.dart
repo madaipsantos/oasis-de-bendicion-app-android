@@ -196,7 +196,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.info_outline_rounded, color: const Color.fromARGB(255, 231, 228, 228), size: 30),
+                                  icon: Icon(Icons.insert_drive_file_rounded, color: const Color.fromARGB(255, 231, 228, 228), size: 30),
                                   splashColor: Colors.red,
                                   highlightColor: Colors.redAccent,
                                   onPressed: () async {
