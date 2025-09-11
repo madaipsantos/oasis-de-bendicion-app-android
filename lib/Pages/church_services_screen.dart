@@ -10,11 +10,8 @@ class ChurchServicesScreen extends StatefulWidget {
 class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
   @override
   Widget build(BuildContext context) {
-    // Responsividade: obtendo dimensões da tela
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // Definindo tamanhos proporcionais
     final double cardTop = screenHeight * 0.03;
     final double cardSide = screenWidth * 0.04;
     final double cardHeight = screenHeight * 0.15;
@@ -46,7 +43,6 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
               ),
             ),
           ),
-          // Conteúdo rolável responsivo
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -59,7 +55,8 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     context: context,
                     title: "Culto Familiar",
                     imagePath: "assets/vision.jpg",
-                    description: "Donde toda la familia está convocada a una experiencia con el Espíritu Santo.",
+                    description:
+                        "Donde toda la familia está convocada a una experiencia con el Espíritu Santo.",
                     time: "Domingo 12:00H",
                     cardHeight: cardHeight,
                     cardRadius: cardRadius,
@@ -72,7 +69,8 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     context: context,
                     title: "Culto de Oración",
                     imagePath: "assets/oracion_culto.png",
-                    description: "Tiempo donde nos conectamos en Clamor al Padre.",
+                    description:
+                        "Tiempo donde nos conectamos en Clamor al Padre.",
                     time: "Martes 20:00H",
                     cardHeight: cardHeight,
                     cardRadius: cardRadius,
@@ -97,7 +95,8 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     context: context,
                     title: "Discipulado",
                     imagePath: "assets/discipulado.jpg",
-                    description: "Un espacio donde aprendemos más acerca de Jesús y el ser sus discípulos.",
+                    description:
+                        "Un espacio donde aprendemos más acerca de Jesús y el ser sus discípulos.",
                     time: "Jueves 20:00H",
                     cardHeight: cardHeight,
                     cardRadius: cardRadius,
@@ -116,7 +115,6 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
     );
   }
 
-  // Widget que cria um Card responsivo para cada culto/evento
   Widget _buildServiceCard({
     required BuildContext context,
     required String title,
@@ -133,6 +131,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16),
       child: Card(
+        // ignore: deprecated_member_use
         color: Colors.black.withOpacity(0.01),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(cardRadius),

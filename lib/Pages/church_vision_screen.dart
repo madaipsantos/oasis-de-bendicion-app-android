@@ -8,21 +8,15 @@ class ChurchVisionScreen extends StatefulWidget {
 }
 
 class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
-
-
   @override
   Widget build(BuildContext context) {
-    // --- Responsividade: obtendo dimensões da tela ---
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // --- Definindo tamanhos proporcionais ---
     final double cardTop = screenHeight * 0.03;
     final double cardSide = screenWidth * 0.04;
     final double cardHeight = screenHeight * 0.22;
     final double cardRadius = 15.0;
     final double cardBorder = 4.0;
-
     final double tituloTop = cardTop + cardHeight + 15;
     final double tituloFont = 22.0;
     final double textoTop = tituloTop + 50;
@@ -50,7 +44,6 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
-          // --- Card responsivo com imagem ---
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -78,7 +71,6 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
-          // --- Título responsivo ---
           Positioned(
             top: tituloTop,
             left: 0,
@@ -90,11 +82,9 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
-          // --- Texto visão responsivo ---
           Positioned(
             top: textoTop,
             left: cardSide + 4,
-            //right: cardSide,
             child: SizedBox(
               width: textoLargura,
               child: Text(

@@ -4,19 +4,14 @@ class RadioProgramsScreen extends StatefulWidget {
   const RadioProgramsScreen({super.key});
 
   @override
-  State<RadioProgramsScreen> createState() =>
-      _RadioProgramsScreenState();
+  State<RadioProgramsScreen> createState() => _RadioProgramsScreenState();
 }
 
 class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
-
   @override
   Widget build(BuildContext context) {
-    // Responsividade: obtendo dimensões da tela
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // Definindo tamanhos proporcionais
     final double cardTop = screenHeight * 0.03;
     final double cardSide = screenWidth * 0.04;
     final double cardHeight = screenHeight * 0.15;
@@ -39,7 +34,6 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
       ),
       body: Stack(
         children: [
-          // Imagem de fundo
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -48,7 +42,6 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
               ),
             ),
           ),
-          // Conteúdo rolável responsivo
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -100,7 +93,6 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
     );
   }
 
-  // Widget que cria um Card responsivo para cada programa
   Widget _buildServiceCard({
     required String title,
     required String imagePath,
@@ -114,6 +106,7 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
     required double textoLargura,
   }) {
     return Card(
+      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.01),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(cardRadius),

@@ -34,7 +34,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
 
     switch (index) {
       case 0:
-        // Não navega se já está na tela atual
         if (_selectedIndex != 0) {
           Navigator.pushReplacement(
             context,
@@ -49,22 +48,18 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
         );
         break;
       case 2:
-        // Adicione a navegação para outra tela se necessário
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // --- ALTERAÇÃO: Pegando largura e altura da tela para responsividade ---
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // --- ALTERAÇÃO: Definindo altura dos cards e largura do botão de forma proporcional ---
-    final double cardHeight = screenHeight * 0.15; // 18% da altura da tela
-    final double buttonWidth = screenWidth * 0.34; // 28% da largura da tela
-    final double buttonTop = 0.0; // margem superior do botão
-    final double buttonRight = 5.0; // margem direita do botão
+    final double cardHeight = screenHeight * 0.15; 
+    final double buttonWidth = screenWidth * 0.34; 
+    final double buttonTop = 0.0; 
+    final double buttonRight = 5.0;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -94,7 +89,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
-                  // --- ALTERAÇÃO: Card Misión responsivo ---
                   _buildCard(
                     context: context,
                     imagePath: 'assets/santabiblia.jpg',
@@ -103,7 +97,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => churchMissionScreen(),
+                          builder: (context) => ChurchMissionScreen(),
                         ),
                       );
                     },
@@ -113,7 +107,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
-                  // --- ALTERAÇÃO: Card Visión responsivo ---
                   _buildCard(
                     context: context,
                     imagePath: 'assets/vision.jpg',
@@ -132,7 +125,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
-                  // --- ALTERAÇÃO: Card Servicios responsivo ---
                   _buildCard(
                     context: context,
                     imagePath: 'assets/discipulado.jpg',
@@ -151,7 +143,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
-                  // --- ALTERAÇÃO: Card Contactos responsivo ---
                   _buildCard(
                     context: context,
                     imagePath: 'assets/google_maps_alt.png',
@@ -188,7 +179,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     );
   }
 
-  // --- ALTERAÇÃO: Widget auxiliar para criar cards responsivos ---
   Widget _buildCard({
     required BuildContext context,
     required String imagePath,

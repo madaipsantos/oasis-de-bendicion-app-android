@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 
-class churchMissionScreen extends StatefulWidget {
-  const churchMissionScreen({super.key});
+class ChurchMissionScreen extends StatefulWidget {
+  const ChurchMissionScreen({super.key});
 
   @override
-  State<churchMissionScreen> createState() => _churchMissionScreenState();
+  State<ChurchMissionScreen> createState() => _ChurchMissionScreenState();
 }
 
-class _churchMissionScreenState extends State<churchMissionScreen> {
+class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
   @override
   Widget build(BuildContext context) {
-    // Responsividade: obtendo dimensões da tela
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
-    // Definindo tamanhos proporcionais
     final double cardHeight = screenHeight * 0.22;
     final double cardRadius = 15.0;
     final double cardBorder = 4.0;
@@ -44,9 +41,7 @@ class _churchMissionScreenState extends State<churchMissionScreen> {
           builder: (context, constraints) {
             return SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -76,7 +71,10 @@ class _churchMissionScreenState extends State<churchMissionScreen> {
                         SizedBox(height: 20),
                         Text(
                           "Misión",
-                          style: TextStyle(fontSize: tituloFont, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: tituloFont,
+                            color: Colors.white,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),
@@ -84,7 +82,10 @@ class _churchMissionScreenState extends State<churchMissionScreen> {
                           width: textoLargura,
                           child: Text(
                             "Ser un entorno de transformación familiar y espiritual, dinámico y poderoso que no pierde el enfoque ni la esencia de su razón de ser. Promoviendo el mensaje de salvación desde el ejemplo, haciendo discípulos hasta lo último de la tierra... con múltiples ubicaciones alrededor del mundo.",
-                            style: TextStyle(fontSize: textoFont, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: textoFont,
+                              color: Colors.white,
+                            ),
                             softWrap: true,
                             textAlign: TextAlign.justify,
                           ),
@@ -100,12 +101,15 @@ class _churchMissionScreenState extends State<churchMissionScreen> {
                           width: textoLargura,
                           child: Text(
                             "Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo; enseñándoles que guarden todas las cosas que os he mandado; y he aquí yo estoy con vosotros todos los días, hasta el fin del mundo. Amen!",
-                            style: TextStyle(fontSize: textoFont, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: textoFont,
+                              color: Colors.white,
+                            ),
                             softWrap: true,
                             textAlign: TextAlign.justify,
                           ),
                         ),
-                        Expanded(child: Container()), // Preenche o espaço restante
+                        Expanded(child: Container()),
                       ],
                     ),
                   ),

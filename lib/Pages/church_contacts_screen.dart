@@ -18,11 +18,9 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Responsividade: obtendo dimensões da tela
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    // Definindo tamanhos proporcionais
     final double cardRadius = 15.0;
     final double cardBorder = 4.0;
     final double cardTop = screenHeight * 0.03;
@@ -103,6 +101,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     String? description,
   }) {
     return Card(
+      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.01),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(cardRadius),
@@ -179,6 +178,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
 
   Widget _buildSocialMediaCard({required double cardRadius}) {
     return Card(
+      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.01),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(cardRadius),
@@ -203,7 +203,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                     );
                   },
                   icon: Icon(MdiIcons.facebook),
-                  iconSize: 50,
+                  iconSize: 45,
                   color: Colors.blue,
                 ),
                 IconButton(
@@ -216,7 +216,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                     );
                   },
                   icon: Icon(MdiIcons.instagram),
-                  iconSize: 50,
+                  iconSize: 45,
                   color: Colors.pink,
                 ),
                 IconButton(
@@ -229,7 +229,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                     );
                   },
                   icon: Icon(MdiIcons.youtube),
-                  iconSize: 60,
+                  iconSize: 55,
                   color: Colors.red,
                 ),
                 IconButton(
@@ -242,7 +242,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                     );
                   },
                   icon: Icon(MdiIcons.web),
-                  iconSize: 50,
+                  iconSize: 45,
                   color: Colors.blue,
                 ),
               ],
@@ -255,6 +255,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
 
   Widget _buildContactCard({required double cardRadius}) {
     return Card(
+      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.01),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(cardRadius),
@@ -342,5 +343,4 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
       ),
     );
   }
-
 }
