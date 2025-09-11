@@ -7,7 +7,6 @@ import 'package:webradiooasis/services/audio_player_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Trava a orientação do app apenas em modo retrato (vertical)
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -25,7 +24,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
