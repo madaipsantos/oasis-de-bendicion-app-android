@@ -275,7 +275,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   appUrl: 'whatsapp://send?phone=+34614126301&text=',
                   icon: MdiIcons.whatsapp,
                   color: Colors.green,
-                  iconSize: 45,
+                  iconSize: 40,
                 ),
                 IconButton(
                   onPressed: () async {
