@@ -6,6 +6,8 @@ import 'package:webradiooasis/Pages/church_vision_screen.dart';
 //import 'package:webradiooasis/utils/app_info.dart';
 import 'radio_main_screen.dart';
 
+/// Tela principal da igreja, exibe cards para missão, visão, serviços e contatos.
+/// Possui navegação inferior para alternar entre a área da igreja e a área da rádio.
 class ChurchMainScreen extends StatefulWidget {
   const ChurchMainScreen({super.key});
 
@@ -20,13 +22,15 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
   @override
   void initState() {
     super.initState();
-    //    AppInfo.getAppVersion().then((version) {
-    //    setState(() {
-    //      _appVersion = version;
-    //    });
-    //  });
+    // Exemplo de como obter a versão do app (comentado)
+    // AppInfo.getAppVersion().then((version) {
+    //   setState(() {
+    //     _appVersion = version;
+    //   });
+    // });
   }
 
+  /// Atualiza o índice selecionado da barra de navegação inferior e faz a navegação.
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -34,6 +38,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
 
     switch (index) {
       case 0:
+        // Se já está na tela da igreja, não faz nada
         if (_selectedIndex != 0) {
           Navigator.pushReplacement(
             context,
@@ -42,18 +47,21 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
         }
         break;
       case 1:
+        // Navega para a tela principal da rádio
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => RadioMainScreen()),
         );
         break;
       case 2:
+        // Não há terceira opção implementada
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Obtém dimensões da tela para responsividade
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double cardHeight = screenHeight * 0.15; 
@@ -74,6 +82,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
       ),
       body: Stack(
         children: [
+          // Imagem de fundo
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -82,6 +91,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
               ),
             ),
           ),
+          // Conteúdo rolável com os cards principais
           SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.all(20.0),
@@ -89,6 +99,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
+                  // Card Missão
                   _buildCard(
                     context: context,
                     imagePath: 'assets/santabiblia.jpg',
@@ -107,6 +118,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
+                  // Card Visão
                   _buildCard(
                     context: context,
                     imagePath: 'assets/vision.jpg',
@@ -125,6 +137,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
+                  // Card Serviços
                   _buildCard(
                     context: context,
                     imagePath: 'assets/discipulado.jpg',
@@ -143,6 +156,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonRight: buttonRight,
                   ),
                   SizedBox(height: 15),
+                  // Card Contatos
                   _buildCard(
                     context: context,
                     imagePath: 'assets/google_maps_alt.png',
@@ -166,6 +180,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
           ),
         ],
       ),
+      // Barra de navegação inferior para alternar entre Igreja e Rádio
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.red,
@@ -179,6 +194,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     );
   }
 
+  /// Constrói um card com imagem e botão, usado para cada seção (Missão, Visão, etc).
   Widget _buildCard({
     required BuildContext context,
     required String imagePath,
@@ -198,6 +214,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
         padding: const EdgeInsets.all(4.0),
         child: Stack(
           children: [
+            // Imagem de fundo do card, clicável
             GestureDetector(
               onTap: onTap,
               child: ClipRRect(
@@ -210,6 +227,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                 ),
               ),
             ),
+            // Botão sobreposto no canto superior direito do card
             Positioned(
               top: buttonTop,
               right: buttonRight,

@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:webradiooasis/utils/our_social_contacts.dart';
 
+/// Tela que exibe os contatos e redes sociais da igreja.
+/// Inclui endereço, redes sociais e formas de contato (WhatsApp e telefone).
 class ChurchContactsScreen extends StatefulWidget {
   const ChurchContactsScreen({super.key});
 
@@ -11,6 +13,7 @@ class ChurchContactsScreen extends StatefulWidget {
 }
 
 class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
+  // URLs para localização da igreja
   static const String geoUrl =
       "geo:43.5322026,-5.6611196?q=Carretera Carbonara, 2227. Gijón, Asturias - España";
   static const String googleMapsUrl =
@@ -18,9 +21,11 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Obtém dimensões da tela para responsividade
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
+    // Define tamanhos e estilos dos cards e textos
     final double cardRadius = 15.0;
     final double cardBorder = 4.0;
     final double cardTop = screenHeight * 0.03;
@@ -61,6 +66,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // Card com endereço e mapa
                   _buildServiceCard(
                     title: "Dirección",
                     imagePath: "assets/mapa.png",
@@ -75,7 +81,9 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                     textoFont: textoFont,
                     textoLargura: textoLargura,
                   ),
+                  // Card com redes sociais
                   _buildSocialMediaCard(cardRadius: cardRadius),
+                  // Card com contatos (WhatsApp e telefone)
                   _buildContactCard(cardRadius: cardRadius),
                   SizedBox(height: 20),
                 ],
@@ -87,6 +95,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Card que exibe o endereço e imagem do mapa, clicável para abrir o app de mapas.
   Widget _buildServiceCard({
     required String title,
     required String imagePath,
@@ -140,6 +149,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Imagem do mapa clicável, abre o app de mapas ou Google Maps no navegador.
   Widget _buildClickableImageCard(
     String imagePath,
     String geoUrl,
@@ -150,6 +160,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
   ) {
     return GestureDetector(
       onTap: () async {
+        // Tenta abrir o app de mapas, se não conseguir, abre o Google Maps no navegador
         if (await canLaunchUrl(Uri.parse(geoUrl))) {
           await launchUrl(Uri.parse(geoUrl));
         } else if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
@@ -176,6 +187,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Card com botões para redes sociais (Facebook, Instagram, YouTube, Site).
   Widget _buildSocialMediaCard({required double cardRadius}) {
     return Card(
       // ignore: deprecated_member_use
@@ -193,6 +205,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // Facebook
                 IconButton(
                   onPressed: () async {
                     await OurSocialContacts.openLink(
@@ -206,6 +219,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   iconSize: 45,
                   color: Colors.blue,
                 ),
+                // Instagram
                 IconButton(
                   onPressed: () async {
                     await OurSocialContacts.openLink(
@@ -219,6 +233,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   iconSize: 45,
                   color: Colors.pink,
                 ),
+                // YouTube
                 IconButton(
                   onPressed: () async {
                     await OurSocialContacts.openLink(
@@ -232,6 +247,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   iconSize: 55,
                   color: Colors.red,
                 ),
+                // Site
                 IconButton(
                   onPressed: () async {
                     await OurSocialContacts.openLink(
@@ -253,6 +269,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Card com botões de contato (WhatsApp e telefone) e número exibido.
   Widget _buildContactCard({required double cardRadius}) {
     return Card(
       // ignore: deprecated_member_use
@@ -270,6 +287,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Botão WhatsApp
                 _buildIconButton(
                   url: 'https://wa.me/+34614126301?text=',
                   appUrl: 'whatsapp://send?phone=+34614126301&text=',
@@ -277,6 +295,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   color: Colors.green,
                   iconSize: 40,
                 ),
+                // Botão Telefone
                 IconButton(
                   onPressed: () async {
                     const phoneUrl = 'tel:+34614126301';
@@ -290,6 +309,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
                   iconSize: 40,
                 ),
                 const SizedBox(width: 7),
+                // Exibe o número de telefone
                 const Text(
                   "+34 614 126 301",
                   style: TextStyle(fontSize: 22, color: Colors.white),
@@ -304,6 +324,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Botão genérico para abrir apps ou links externos (ex: WhatsApp).
   Widget _buildIconButton({
     required String url,
     required String appUrl,
@@ -313,6 +334,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
   }) {
     return IconButton(
       onPressed: () async {
+        // Tenta abrir o app, se não conseguir, tenta o link web
         if (await canLaunchUrl(Uri.parse(appUrl))) {
           await launchUrl(
             Uri.parse(appUrl),
@@ -330,6 +352,7 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
+  /// Widget para exibir títulos centralizados e estilizados.
   Widget _buildTitle(String text, {double fontSize = 20, bool isBold = true}) {
     return Center(
       child: Text(

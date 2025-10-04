@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Tela que exibe os horários e descrições dos principais cultos e serviços da igreja.
 class ChurchServicesScreen extends StatefulWidget {
   const ChurchServicesScreen({super.key});
 
@@ -10,6 +11,7 @@ class ChurchServicesScreen extends StatefulWidget {
 class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
   @override
   Widget build(BuildContext context) {
+    // Obtém dimensões da tela para responsividade
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double cardTop = screenHeight * 0.03;
@@ -43,6 +45,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
               ),
             ),
           ),
+          // Conteúdo rolável com os cards dos cultos
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -51,6 +54,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // Card Culto Familiar
                   _buildServiceCard(
                     context: context,
                     title: "Culto Familiar",
@@ -65,6 +69,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     textoFont: textoFont,
                     textoLargura: textoLargura,
                   ),
+                  // Card Culto de Oração
                   _buildServiceCard(
                     context: context,
                     title: "Culto de Oración",
@@ -79,6 +84,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     textoFont: textoFont,
                     textoLargura: textoLargura,
                   ),
+                  // Card Oração da Manhã
                   _buildServiceCard(
                     context: context,
                     title: "Oración de la Mañana",
@@ -91,6 +97,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                     textoFont: textoFont,
                     textoLargura: textoLargura,
                   ),
+                  // Card Discipulado
                   _buildServiceCard(
                     context: context,
                     title: "Discipulado",
@@ -115,6 +122,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
     );
   }
 
+  /// Constrói um card para cada culto/serviço, exibindo título, imagem, descrição e horário.
   Widget _buildServiceCard({
     required BuildContext context,
     required String title,

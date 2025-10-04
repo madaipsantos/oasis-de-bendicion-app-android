@@ -2,27 +2,32 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
+/// Handler responsável por integrar o player de áudio com o audio_service,
+/// permitindo controle via notificações e sistema operacional.
 class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
   final AudioPlayer _player;
 
+  /// Construtor recebe a instância do player.
   RadioAudioHandler(this._player) {
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForPlayerStateChanges();
     _setInitialMediaItem();
   }
 
+  /// Escuta eventos do player e atualiza o estado do audio_service,
+  /// incluindo controles e status de reprodução.
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _player.playbackEventStream.listen((event) {
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.rewind,
-          _player.playing ? MediaControl.pause : MediaControl.play,
-          MediaControl.stop,
+          MediaControl.rewind, // Controle de retroceder (não implementado no player)
+          _player.playing ? MediaControl.pause : MediaControl.play, // Alterna play/pause
+          MediaControl.stop, // Controle de parar
         ],
         systemActions: const {
-          MediaAction.seek,
+          MediaAction.seek, // Permite ação de seek (não implementada aqui)
         },
-        androidCompactActionIndices: const [0, 1, 2],
+        androidCompactActionIndices: const [0, 1, 2], // Ícones compactos na notificação
         playing: _player.playing,
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
@@ -35,6 +40,7 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     });
   }
 
+  /// Escuta mudanças de estado do player para parar o áudio ao finalizar.
   void _listenForPlayerStateChanges() {
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
@@ -43,6 +49,7 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     });
   }
 
+  /// Define o item de mídia inicial exibido nas notificações do sistema.
   void _setInitialMediaItem() {
     mediaItem.add(MediaItem(
       id: 'https://stream-152.zeno.fm/5qrh7beqizzvv',
@@ -53,12 +60,15 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     ));
   }
 
+  /// Inicia a reprodução do áudio.
   @override
   Future<void> play() => _player.play();
 
+  /// Pausa a reprodução do áudio.
   @override
   Future<void> pause() => _player.pause();
 
+  /// Para a reprodução do áudio.
   @override
   Future<void> stop() => _player.stop();
 }
