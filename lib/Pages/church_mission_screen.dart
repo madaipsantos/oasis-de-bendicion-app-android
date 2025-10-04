@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Tela que exibe a missão da igreja, incluindo imagem, texto explicativo e versículo bíblico.
 class ChurchMissionScreen extends StatefulWidget {
   const ChurchMissionScreen({super.key});
 
@@ -10,6 +11,7 @@ class ChurchMissionScreen extends StatefulWidget {
 class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
   @override
   Widget build(BuildContext context) {
+    // Obtém dimensões da tela para responsividade
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double cardHeight = screenHeight * 0.22;
@@ -31,6 +33,7 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
         centerTitle: true,
       ),
       body: Container(
+        // Imagem de fundo da tela
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/back.jpg'),
@@ -51,7 +54,7 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Card com imagem
+                        // Card com imagem ilustrativa
                         Container(
                           height: cardHeight,
                           width: double.infinity,
@@ -69,6 +72,7 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
                           ),
                         ),
                         SizedBox(height: 20),
+                        // Título "Misión"
                         Text(
                           "Misión",
                           style: TextStyle(
@@ -78,6 +82,7 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),
+                        // Texto explicativo da missão
                         SizedBox(
                           width: textoLargura,
                           child: Text(
@@ -91,12 +96,14 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
                           ),
                         ),
                         SizedBox(height: 20),
+                        // Referência bíblica
                         Text(
                           "Mateo 28:19-20",
                           style: TextStyle(fontSize: 21, color: Colors.white),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 10),
+                        // Versículo bíblico
                         SizedBox(
                           width: textoLargura,
                           child: Text(
@@ -109,6 +116,7 @@ class _ChurchMissionScreenState extends State<ChurchMissionScreen> {
                             textAlign: TextAlign.justify,
                           ),
                         ),
+                        // Espaço para empurrar o conteúdo para cima, se necessário
                         Expanded(child: Container()),
                       ],
                     ),

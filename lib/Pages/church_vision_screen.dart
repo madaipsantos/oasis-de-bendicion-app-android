@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Tela que exibe a visão da igreja, incluindo imagem ilustrativa e texto explicativo.
 class ChurchVisionScreen extends StatefulWidget {
   const ChurchVisionScreen({super.key});
 
@@ -36,6 +37,7 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
       ),
       body: Stack(
         children: [
+          // Imagem de fundo
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -44,6 +46,7 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
+          // Card com imagem ilustrativa da visão
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -71,6 +74,7 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
+          // Título "Visión"
           Positioned(
             top: tituloTop,
             left: 0,
@@ -82,6 +86,7 @@ class _ChurchVisionScreenState extends State<ChurchVisionScreen> {
               ),
             ),
           ),
+          // Texto explicativo da visão
           Positioned(
             top: textoTop,
             left: cardSide + 4,

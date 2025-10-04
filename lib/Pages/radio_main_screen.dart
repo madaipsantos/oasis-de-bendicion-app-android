@@ -11,6 +11,9 @@ import 'package:webradiooasis/utils/battery_utils.dart';
 import 'package:webradiooasis/utils/our_social_contacts.dart';
 import '../services/audio_player_provider.dart';
 
+/// Tela principal da rádio.
+/// Permite ouvir a rádio, acessar programas, redes sociais e alternar para a área da igreja.
+/// Gerencia conexão, player, overlays de erro e otimização de bateria.
 class RadioMainScreen extends StatefulWidget {
   const RadioMainScreen({super.key});
 
@@ -36,6 +39,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     _startConnectionMonitor();
   }
 
+  /// Checa conexão com a internet e prepara o player se necessário.
   Future<void> _checkConnection() async {
     setState(() {
       _checkingConnection = true;
@@ -68,6 +72,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     }
   }
 
+  /// Inicia monitoramento periódico da conexão.
   void _startConnectionMonitor() {
     _connectionMonitorTimer?.cancel();
     _connectionMonitorTimer = Timer.periodic(Duration(seconds: 5), (
@@ -96,6 +101,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     });
   }
 
+  /// Alterna entre as abas de Igreja e Rádio.
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -244,6 +250,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// AppBar personalizada para a rádio.
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text(
@@ -256,6 +263,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Barra de navegação inferior para alternar entre Igreja e Rádio.
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
@@ -269,6 +277,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Controles do player de áudio (play/pause e título da faixa).
   Widget _buildPlayerControls(AudioPlayerProvider audioPlayerProvider) {
     return Column(
       children: [
@@ -329,6 +338,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Botões para redes sociais e telefone.
   Widget _buildSocialButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -389,6 +399,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Botão individual de rede social.
   Widget _buildSocialButton({
     required IconData icon,
     required Color color,
@@ -402,6 +413,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Mostra alerta de erro de permissão de telefone.
   void _showPhonePermissionError() {
     showDialog(
       context: context,
@@ -419,6 +431,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Overlay exibido quando não há conexão com a internet.
   Widget _buildConnectionErrorOverlay() {
     return Container(
       // ignore: deprecated_member_use
@@ -476,6 +489,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Overlay exibido quando há erro no streaming da rádio.
   Widget _buildStreamingErrorOverlay() {
     return Container(
       // ignore: deprecated_member_use
@@ -514,6 +528,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Overlay exibido durante o carregamento do player.
   Widget _buildLoadingOverlay() {
     return Container(
       color: Colors.black45,
@@ -530,6 +545,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
+  /// Card para acessar programas radiais.
   Widget _buildCard({
     required BuildContext context,
     required String imagePath,
