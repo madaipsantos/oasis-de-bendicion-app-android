@@ -17,7 +17,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   String _currentTitle = RadioConstants.defaultTitle;
   String get currentTitle => _currentTitle;
   AudioPlayer _player = AudioPlayer();
-  List<StreamSubscription> _subscriptions = [];
+  List<StreamSubscription> subscriptions = [];
   AudioHandler? _audioHandler;
   bool _isPlaying = false;
   bool _isLoading = false;
@@ -66,10 +66,10 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     _isPlaying = false;
     notifyListeners();
     // Remove listeners antigos
-    for (final sub in _subscriptions) {
+    for (final sub in subscriptions) {
       await sub.cancel();
     }
-    _subscriptions.clear();
+    subscriptions.clear();
     // Dispose do player antigo
     _player.dispose();
     // Cria novo player
@@ -100,12 +100,12 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _setupPlayerListeners() {
-    _subscriptions.add(_player.playbackEventStream.listen(
+    subscriptions.add(_player.playbackEventStream.listen(
       _handlePlaybackEvent,
       onError: _handlePlaybackError,
     ));
 
-    _subscriptions.add(_player.playerStateStream.listen(_handlePlayerStateChange));
+    subscriptions.add(_player.playerStateStream.listen(_handlePlayerStateChange));
   }
 
   void _handlePlaybackEvent(PlaybackEvent event) {
@@ -179,7 +179,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _setupMetadataListener() {
-    _subscriptions.add(_player.icyMetadataStream.listen((icy) {
+    subscriptions.add(_player.icyMetadataStream.listen((icy) {
       final title = icy?.info?.title;
       if (title != null) {
         _currentTitle = title;
@@ -259,10 +259,10 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    for (final sub in _subscriptions) {
+    for (final sub in subscriptions) {
       sub.cancel();
     }
-    _subscriptions.clear();
+    subscriptions.clear();
     _player.dispose();
     super.dispose();
   }
