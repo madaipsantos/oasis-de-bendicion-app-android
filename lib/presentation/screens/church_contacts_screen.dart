@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:webradiooasis/utils/our_social_contacts.dart';
+import 'package:webradiooasis/core/utils/our_social_contacts.dart';
 
 /// Tela que exibe os contatos e redes sociais da igreja.
 /// Inclui endereço, redes sociais e formas de contato (WhatsApp e telefone).
