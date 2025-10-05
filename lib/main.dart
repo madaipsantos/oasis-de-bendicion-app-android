@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:webradiooasis/presentation/screens/church_main_screen.dart';
+import 'package:webradiooasis/config/router/app_router.dart';
 import 'package:webradiooasis/presentation/providers/audio_player_provider.dart';
 
 void main() async {
@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      home: ChurchMainScreen(),
+      initialRoute: AppRouter.home,
+      routes: AppRouter.routes,
     );
   }
 }
