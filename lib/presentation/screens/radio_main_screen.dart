@@ -4,10 +4,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webradiooasis/config/router/app_router.dart';
 import 'package:webradiooasis/core/utils/our_social_contacts.dart';
 import 'package:webradiooasis/infrastructure/services/connection_service.dart';
-import 'package:webradiooasis/presentation/screens/church_main_screen.dart';
-import 'package:webradiooasis/presentation/screens/radio_programs_screen.dart';
 import 'package:webradiooasis/core/utils/battery_utils.dart';
 import '../providers/audio_player_provider.dart';
 
@@ -108,17 +107,11 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     });
     switch (index) {
       case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ChurchMainScreen()),
-        );
+        Navigator.pushReplacementNamed(context, AppRouter.home);
         break;
       case 1:
         if (_selectedIndex != 1) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => RadioMainScreen()),
-          );
+          Navigator.pushReplacementNamed(context, AppRouter.radio);
         }
         break;
     }
@@ -173,12 +166,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                               imagePath: 'assets/radiales.jpg',
                               buttonLabel: "Programas Radiales",
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RadioProgramsScreen(),
-                                  ),
-                                );
+                                Navigator.pushNamed(context, AppRouter.radioPrograms);
                               },
                               cardHeight: cardHeight,
                               buttonWidth: buttonWidth,

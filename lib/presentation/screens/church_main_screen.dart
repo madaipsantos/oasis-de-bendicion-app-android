@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:webradiooasis/presentation/screens/church_contacts_screen.dart';
-import 'package:webradiooasis/presentation/screens/church_mission_screen.dart';
-import 'package:webradiooasis/presentation/screens/church_services_screen.dart';
-import 'package:webradiooasis/presentation/screens/church_vision_screen.dart';
+import 'package:webradiooasis/config/router/app_router.dart';
 //import 'package:webradiooasis/utils/app_info.dart';
-import 'radio_main_screen.dart';
 
 /// Tela principal da igreja, exibe cards para missão, visão, serviços e contatos.
 /// Possui navegação inferior para alternar entre a área da igreja e a área da rádio.
@@ -40,18 +36,12 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
       case 0:
         // Se já está na tela da igreja, não faz nada
         if (_selectedIndex != 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => ChurchMainScreen()),
-          );
+          Navigator.pushReplacementNamed(context, AppRouter.home);
         }
         break;
       case 1:
         // Navega para a tela principal da rádio
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => RadioMainScreen()),
-        );
+        Navigator.pushReplacementNamed(context, AppRouter.radio);
         break;
       case 2:
         // Não há terceira opção implementada
@@ -105,12 +95,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     imagePath: 'assets/santabiblia.jpg',
                     buttonLabel: "Misión",
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChurchMissionScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, AppRouter.mission);
                     },
                     cardHeight: cardHeight,
                     buttonWidth: buttonWidth,
@@ -124,12 +109,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     imagePath: 'assets/vision.jpg',
                     buttonLabel: "Visión",
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChurchVisionScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, AppRouter.vision);
                     },
                     cardHeight: cardHeight,
                     buttonWidth: buttonWidth,
@@ -143,12 +123,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     imagePath: 'assets/discipulado.jpg',
                     buttonLabel: "Servicios",
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChurchServicesScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, AppRouter.services);
                     },
                     cardHeight: cardHeight,
                     buttonWidth: buttonWidth,
@@ -162,12 +137,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     imagePath: 'assets/google_maps_alt.png',
                     buttonLabel: "Contactos",
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChurchContactsScreen(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, AppRouter.contacts);
                     },
                     cardHeight: cardHeight,
                     buttonWidth: buttonWidth,
