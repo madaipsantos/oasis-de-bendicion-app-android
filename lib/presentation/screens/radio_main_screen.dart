@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
-import 'package:webradiooasis/services/connection_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webradiooasis/Pages/church_main_screen.dart';
-import 'package:webradiooasis/Pages/radio_programs_screen.dart';
-import 'package:webradiooasis/utils/battery_utils.dart';
-import 'package:webradiooasis/utils/our_social_contacts.dart';
-import '../services/audio_player_provider.dart';
+import 'package:webradiooasis/core/utils/our_social_contacts.dart';
+import 'package:webradiooasis/infrastructure/services/connection_service.dart';
+import 'package:webradiooasis/presentation/screens/church_main_screen.dart';
+import 'package:webradiooasis/presentation/screens/radio_programs_screen.dart';
+import 'package:webradiooasis/core/utils/battery_utils.dart';
+import '../providers/audio_player_provider.dart';
 
 /// Tela principal da rádio.
 /// Permite ouvir a rádio, acessar programas, redes sociais e alternar para a área da igreja.

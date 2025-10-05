@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:webradiooasis/Pages/church_contacts_screen.dart';
-import 'package:webradiooasis/Pages/church_mission_screen.dart';
-import 'package:webradiooasis/Pages/church_services_screen.dart';
-import 'package:webradiooasis/Pages/church_vision_screen.dart';
+import 'package:webradiooasis/presentation/screens/church_contacts_screen.dart';
+import 'package:webradiooasis/presentation/screens/church_mission_screen.dart';
+import 'package:webradiooasis/presentation/screens/church_services_screen.dart';
+import 'package:webradiooasis/presentation/screens/church_vision_screen.dart';
 //import 'package:webradiooasis/utils/app_info.dart';
 import 'radio_main_screen.dart';
 
