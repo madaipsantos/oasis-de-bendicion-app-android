@@ -21,7 +21,7 @@ class RadioMainScreen extends StatefulWidget {
 }
 
 class _RadioMainScreenState extends State<RadioMainScreen> {
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1; // Radio tab is always selected in this screen
   bool _hasConnection = true;
   bool _checkingConnection = true;
   Timer? _connectionMonitorTimer;
@@ -102,17 +102,14 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
 
   /// Alterna entre as abas de Igreja e Rádio.
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == _selectedIndex) return; // No action if already selected
+
     switch (index) {
       case 0:
         Navigator.pushReplacementNamed(context, AppRouter.home);
         break;
       case 1:
-        if (_selectedIndex != 1) {
-          Navigator.pushReplacementNamed(context, AppRouter.radio);
-        }
+        Navigator.pushReplacementNamed(context, AppRouter.radio);
         break;
     }
   }
