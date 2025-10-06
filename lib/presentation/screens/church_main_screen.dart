@@ -12,7 +12,7 @@ class ChurchMainScreen extends StatefulWidget {
 }
 
 class _ChurchMainScreenState extends State<ChurchMainScreen> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0; // Church tab is always selected in this screen
   // String _appVersion = '';
 
   @override
@@ -26,25 +26,16 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     // });
   }
 
-  /// Atualiza o índice selecionado da barra de navegação inferior e faz a navegação.
+  /// Navegação entre as abas de Igreja e Rádio.
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == _selectedIndex) return; // No action if already selected
 
     switch (index) {
       case 0:
-        // Se já está na tela da igreja, não faz nada
-        if (_selectedIndex != 0) {
-          Navigator.pushReplacementNamed(context, AppRouter.home);
-        }
+        Navigator.pushReplacementNamed(context, AppRouter.home);
         break;
       case 1:
-        // Navega para a tela principal da rádio
         Navigator.pushReplacementNamed(context, AppRouter.radio);
-        break;
-      case 2:
-        // Não há terceira opção implementada
         break;
     }
   }
