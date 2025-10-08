@@ -1,33 +1,42 @@
-// Handler para integração com audio_service
+/// Audio handler for integrating just_audio with audio_service.
+/// Provides playback controls and notification updates.
+library;
+
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:webradiooasis/core/exceptions/radio_audio_exception.dart';
 
-/// Handler responsável por integrar o player de áudio com o audio_service,
-/// permitindo controle via notificações e sistema operacional.
+// Constants for media item details
+const String kStreamUrl = 'https://stream-152.zeno.fm/5qrh7beqizzvv';
+const String kAlbumName = 'Oasis de Bendición';
+const String kTitle = 'Rádio Oasis';
+const String kArtist = 'Oasis de Bendición';
+const String kArtUri = 'https://sua-imagem.com/logo.png';
+
+/// Handles audio playback and integrates with audio_service for system controls.
 class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
   final AudioPlayer _player;
 
-  /// Construtor recebe a instância do player.
+  /// Creates a [RadioAudioHandler] with the given [AudioPlayer].
   RadioAudioHandler(this._player) {
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForPlayerStateChanges();
     _setInitialMediaItem();
   }
 
-  /// Escuta eventos do player e atualiza o estado do audio_service,
-  /// incluindo controles e status de reprodução.
+  // Updates playback state for audio_service notifications.
   void _notifyAudioHandlerAboutPlaybackEvents() {
     _player.playbackEventStream.listen((event) {
       playbackState.add(playbackState.value.copyWith(
         controls: [
-          MediaControl.rewind, // Controle de retroceder (não implementado no player)
-          _player.playing ? MediaControl.pause : MediaControl.play, // Alterna play/pause
-          MediaControl.stop, // Controle de parar
+          MediaControl.rewind,
+          _player.playing ? MediaControl.pause : MediaControl.play,
+          MediaControl.stop,
         ],
         systemActions: const {
-          MediaAction.seek, // Permite ação de seek (não implementada aqui)
+          MediaAction.seek,
         },
-        androidCompactActionIndices: const [0, 1, 2], // Ícones compactos na notificação
+        androidCompactActionIndices: const [0, 1, 2],
         playing: _player.playing,
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
@@ -40,7 +49,7 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     });
   }
 
-  /// Escuta mudanças de estado do player para parar o áudio ao finalizar.
+  // Stops playback when the audio completes.
   void _listenForPlayerStateChanges() {
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
@@ -49,26 +58,62 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     });
   }
 
-  /// Define o item de mídia inicial exibido nas notificações do sistema.
+  // Sets the initial media item for notifications.
   void _setInitialMediaItem() {
     mediaItem.add(MediaItem(
-      id: 'https://stream-152.zeno.fm/5qrh7beqizzvv',
-      album: 'Oasis de Bendición',
-      title: 'Rádio Oasis',
-      artist: 'Oasis de Bendición',
-      artUri: Uri.parse('https://sua-imagem.com/logo.png'), // Troque para sua logo
+      id: kStreamUrl,
+      album: kAlbumName,
+      title: kTitle,
+      artist: kArtist,
+      artUri: Uri.parse(kArtUri),
     ));
   }
 
-  /// Inicia a reprodução do áudio.
+  /// Starts audio playback.
+  /// 
+  /// Throws a [RadioAudioException] if an error occurs during the process.
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() async {
+    try {
+      await _player.play();
+    } catch (e, stackTrace) {
+      throw RadioAudioException(
+        'Failed to start playback',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
 
-  /// Pausa a reprodução do áudio.
+  /// Pauses audio playback.
+  /// 
+  /// Throws a [RadioAudioException] if an error occurs during the process.
   @override
-  Future<void> pause() => _player.pause();
+  Future<void> pause() async {
+    try {
+      await _player.pause();
+    } catch (e, stackTrace) {
+      throw RadioAudioException(
+        'Failed to pause playback',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
 
-  /// Para a reprodução do áudio.
+  /// Stops audio playback.
+  /// 
+  /// Throws a [RadioAudioException] if an error occurs during the process.
   @override
-  Future<void> stop() => _player.stop();
+  Future<void> stop() async {
+    try {
+      await _player.stop();
+    } catch (e, stackTrace) {
+      throw RadioAudioException(
+        'Failed to stop playback',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
 }

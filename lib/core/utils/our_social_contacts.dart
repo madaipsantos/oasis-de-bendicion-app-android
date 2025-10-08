@@ -1,98 +1,122 @@
+/// Utility class for interactions with app social networks and contacts.
+/// Provides methods to open links, request phone permissions, and send WhatsApp messages.
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../exceptions/social_contacts_exception.dart';
 
-/// Classe utilitária para interações com redes sociais e contatos do app.
+/// Provides methods for social and contact interactions.
 class OurSocialContacts {
-  /// Tenta abrir um link de aplicativo (appUrl) ou, se não disponível, o link web (webUrl).
-  /// Exibe um alerta caso nenhum dos dois possa ser aberto.
+  /// Attempts to open an app link [appUrl], or falls back to [webUrl] if unavailable.
+  /// Shows an alert if neither can be opened.
+  ///
+  /// Throws a [SocialContactsException] if an error occurs during the process.
   static Future<void> openLink(
     BuildContext context,
     String appUrl,
     String webUrl,
-    String nomeApp,
+    String appName,
   ) async {
-    // Tenta abrir o link do aplicativo
-    if (await canLaunchUrl(Uri.parse(appUrl))) {
-      await launchUrl(Uri.parse(appUrl), mode: LaunchMode.externalApplication);
-    }
-    // Se não conseguir, tenta abrir o link web
-    else if (await canLaunchUrl(Uri.parse(webUrl))) {
-      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-    }
-    // Se não conseguir nenhum, exibe um alerta de erro
-    else {
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Erro'),
-            content: Text('Não foi possível abrir o $nomeApp.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+    try {
+      if (await canLaunchUrl(Uri.parse(appUrl))) {
+        await launchUrl(Uri.parse(appUrl), mode: LaunchMode.externalApplication);
+      } else if (await canLaunchUrl(Uri.parse(webUrl))) {
+        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: Text('Não foi possível abrir o $appName.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
+    } catch (e, stackTrace) {
+      throw SocialContactsException(
+        'Failed to open link for $appName',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
-  /// Solicita permissão para realizar chamadas telefônicas.
-  /// Retorna true se a permissão for concedida.
+  /// Requests permission to make phone calls.
+  /// Returns true if permission is granted.
+  /// 
+  /// Throws a [SocialContactsException] if an error occurs during the process.
   static Future<bool> requestPhonePermission() async {
-    if (await Permission.phone.isGranted) {
-      return true;
-    } else {
-      final status = await Permission.phone.request();
-      return status == PermissionStatus.granted;
+    try {
+      if (await Permission.phone.isGranted) {
+        return true;
+      } else {
+        final status = await Permission.phone.request();
+        return status == PermissionStatus.granted;
+      }
+    } catch (e, stackTrace) {
+      throw SocialContactsException(
+        'Failed to request phone permission',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
-  /// Abre o WhatsApp para enviar uma mensagem de petição de oração.
-  /// Tenta abrir o app, se não conseguir, tenta o link web.
-  /// Exibe um alerta se não for possível abrir nenhum.
+  /// Opens WhatsApp to send a prayer request message.
+  /// Tries to open the app, falls back to the web link if needed.
+  /// Shows an alert if neither can be opened.
+  ///
+  /// Throws a [SocialContactsException] if an error occurs during the process.
   static Future<void> petitionPrayer(BuildContext context) async {
-    final String message = "Bendiciones...";
-    final String telefone = '+34614126301';
-    final whatsappApp =
-        'whatsapp://send?phone=$telefone&text=${Uri.encodeComponent(message)}';
-    final whatsappUrl =
-        'https://wa.me/$telefone?text=${Uri.encodeComponent(message)}';
+    try {
+      const String message = "Bendiciones...";
+      const String phone = '+34614126301';
+      final String whatsappApp =
+          'whatsapp://send?phone=$phone&text=${Uri.encodeComponent(message)}';
+      final String whatsappUrl =
+          'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
 
-    // Tenta abrir o WhatsApp pelo app
-    if (await canLaunchUrl(Uri.parse(whatsappApp))) {
-      await launchUrl(
-        Uri.parse(whatsappApp),
-        mode: LaunchMode.externalApplication,
-      );
-    }
-    // Se não conseguir, tenta abrir pelo navegador
-    else if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
-      await launchUrl(
-        Uri.parse(whatsappUrl),
-        mode: LaunchMode.externalApplication,
-      );
-    }
-    // Se não conseguir nenhum, exibe um alerta de erro
-    else {
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Erro'),
-            content: const Text('Não foi possível abrir o WhatsApp.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+      if (await canLaunchUrl(Uri.parse(whatsappApp))) {
+        await launchUrl(
+          Uri.parse(whatsappApp),
+          mode: LaunchMode.externalApplication,
         );
+      } else if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+        await launchUrl(
+          Uri.parse(whatsappUrl),
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erro'),
+              content: const Text('Não foi possível abrir o WhatsApp.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
+    } catch (e, stackTrace) {
+      throw SocialContactsException(
+        'Failed to send WhatsApp petition prayer',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 }

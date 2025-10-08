@@ -1,20 +1,30 @@
-import 'package:http/http.dart' as http;
+/// Service responsible for checking internet connectivity.
+/// Makes an HTTP request to verify active connection.
+library;
 
-/// Serviço responsável por checar a conexão com a internet.
+import 'package:http/http.dart' as http;
+import 'package:webradiooasis/core/exceptions/connection_exception.dart';
+
+// Constants
+const String kTestUrl = 'https://www.google.com';
+
+/// Checks for an active internet connection by making an HTTP request.
 class ConnectionService {
-  /// Verifica se há conexão com a internet fazendo uma requisição HTTP para o Google.
+  /// Returns `true` if the device has an active internet connection.
+  /// Performs a GET request to [kTestUrl] and checks for a 200 OK response.
+  /// Returns `false` if an exception occurs or the response is not valid.
   /// 
-  /// Retorna `true` se o status da resposta for 200 (OK), indicando conexão ativa.
-  /// Retorna `false` em caso de erro ou se não houver resposta válida.
+  /// Throws a [ConnectionException] if an error occurs during the process.
   Future<bool> hasConnection() async {
     try {
-      // Faz uma requisição GET para o Google.
-      final response = await http.get(Uri.parse('https://www.google.com'));
-      // Se o status for 200, há conexão.
+      final response = await http.get(Uri.parse(kTestUrl));
       return response.statusCode == 200;
-    } catch (_) {
-      // Em caso de exceção (sem internet, timeout, etc), retorna false.
-      return false;
+    } catch (e, stackTrace) {
+      throw ConnectionException(
+        'Failed to check internet connection',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 }
