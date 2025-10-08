@@ -1,18 +1,27 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:provider/provider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'package:webradiooasis/config/router/app_router.dart';
 import 'package:webradiooasis/core/utils/our_social_contacts.dart';
-import 'package:webradiooasis/infrastructure/services/connection_service.dart';
 import 'package:webradiooasis/core/utils/battery_utils.dart';
+import 'package:webradiooasis/infrastructure/services/connection_service.dart';
 import '../providers/audio_player_provider.dart';
 
-/// Tela principal da rádio.
-/// Permite ouvir a rádio, acessar programas, redes sociais e alternar para a área da igreja.
-/// Gerencia conexão, player, overlays de erro e otimização de bateria.
+/// Constants
+const String kRadioBackgroundImage = 'assets/back.jpg';
+const String kRadioLogoImage = 'assets/photoOasisRadio.jpg';
+const String kRadioProgramsImage = 'assets/radiales.jpg';
+const Color kCardColor = Color.fromARGB(255, 141, 59, 59);
+const int kRadioTabIndex = 1;
+
+/// Main screen for the radio section.
+/// Allows listening to the radio, accessing programs, social networks, and switching to the church area.
+/// Manages connection, player, error overlays, and battery optimization.
 class RadioMainScreen extends StatefulWidget {
   const RadioMainScreen({super.key});
 
@@ -21,7 +30,7 @@ class RadioMainScreen extends StatefulWidget {
 }
 
 class _RadioMainScreenState extends State<RadioMainScreen> {
-  final int _selectedIndex = 1; // Radio tab is always selected in this screen
+  final int _selectedIndex = kRadioTabIndex;
   bool _hasConnection = true;
   bool _checkingConnection = true;
   Timer? _connectionMonitorTimer;
@@ -38,7 +47,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     _startConnectionMonitor();
   }
 
-  /// Checa conexão com a internet e prepara o player se necessário.
+  /// Checks internet connection and prepares the player if necessary.
   Future<void> _checkConnection() async {
     setState(() {
       _checkingConnection = true;
@@ -49,34 +58,26 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
       _hasConnection = result;
       _checkingConnection = false;
     });
+    final audioPlayerProvider = Provider.of<AudioPlayerProvider>(
+      // ignore: use_build_context_synchronously
+      context,
+      listen: false,
+    );
     if (result) {
-      final audioPlayerProvider = Provider.of<AudioPlayerProvider>(
-        // ignore: use_build_context_synchronously
-        context,
-        listen: false,
-      );
       if (!audioPlayerProvider.initialized && !audioPlayerProvider.isPlaying) {
         await audioPlayerProvider.preparePlayer();
       }
-    }
-    if (!result) {
-      final audioPlayerProvider = Provider.of<AudioPlayerProvider>(
-        // ignore: use_build_context_synchronously
-        context,
-        listen: false,
-      );
+    } else {
       if (audioPlayerProvider.isPlaying) {
         await audioPlayerProvider.stopCompletely();
       }
     }
   }
 
-  /// Inicia monitoramento periódico da conexão.
+  /// Starts periodic monitoring of the internet connection.
   void _startConnectionMonitor() {
     _connectionMonitorTimer?.cancel();
-    _connectionMonitorTimer = Timer.periodic(Duration(seconds: 5), (
-      timer,
-    ) async {
+    _connectionMonitorTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       final service = ConnectionService();
       final result = await service.hasConnection();
       if (!result && _hasConnection) {
@@ -92,7 +93,6 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
           await audioPlayerProvider.stopCompletely();
         }
       } else if (result && !_hasConnection) {
-        // Reconectou
         setState(() {
           _hasConnection = true;
         });
@@ -100,10 +100,9 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     });
   }
 
-  /// Alterna entre as abas de Igreja e Rádio.
+  /// Handles bottom navigation bar taps.
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // No action if already selected
-
+    if (index == _selectedIndex) return;
     switch (index) {
       case 0:
         Navigator.pushReplacementNamed(context, AppRouter.home);
@@ -138,7 +137,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/back.jpg'),
+                image: AssetImage(kRadioBackgroundImage),
                 fit: BoxFit.cover,
               ),
             ),
@@ -158,9 +157,8 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            _buildCard(
-                              context: context,
-                              imagePath: 'assets/radiales.jpg',
+                            _RadioSectionCard(
+                              imagePath: kRadioProgramsImage,
                               buttonLabel: "Programas Radiales",
                               onTap: () {
                                 Navigator.pushNamed(context, AppRouter.radioPrograms);
@@ -170,27 +168,20 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                               buttonTop: buttonTop,
                               buttonRight: buttonRight,
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.insert_drive_file_rounded,
-                                    color: const Color.fromARGB(
-                                      255,
-                                      231,
-                                      228,
-                                      228,
-                                    ),
+                                    color: Color.fromARGB(255, 231, 228, 228),
                                     size: 30,
                                   ),
                                   splashColor: Colors.red,
                                   highlightColor: Colors.redAccent,
                                   onPressed: () async {
-                                    await BatteryUtils.handleBatteryOptimization(
-                                      context,
-                                    );
+                                    await BatteryUtils.handleBatteryOptimization(context);
                                   },
                                 ),
                               ],
@@ -201,18 +192,16 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                                 height: 220,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(400),
-                                  child: Image.asset(
-                                    'assets/photoOasisRadio.jpg',
-                                  ),
+                                  child: Image.asset(kRadioLogoImage),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 25),
+                            const SizedBox(height: 25),
                             _buildPlayerControls(audioPlayerProvider),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             _buildSocialButtons(),
-                            Expanded(child: Container()),
-                            SizedBox(height: 20),
+                            const Expanded(child: SizedBox()),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
@@ -235,7 +224,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// AppBar personalizada para a rádio.
+  /// Builds the custom AppBar for the radio screen.
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: const Text(
@@ -248,7 +237,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Barra de navegação inferior para alternar entre Igreja e Rádio.
+  /// Builds the bottom navigation bar for switching between Church and Radio.
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
@@ -262,7 +251,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Controles do player de áudio (play/pause e título da faixa).
+  /// Builds the audio player controls (play/pause and track title).
   Widget _buildPlayerControls(AudioPlayerProvider audioPlayerProvider) {
     return Column(
       children: [
@@ -272,10 +261,9 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
             shape: BoxShape.circle,
           ),
           child: IconButton(
-            onPressed:
-                _hasConnection
-                    ? () => audioPlayerProvider.togglePlayPause()
-                    : null,
+            onPressed: _hasConnection
+                ? () => audioPlayerProvider.togglePlayPause()
+                : null,
             icon: Icon(
               audioPlayerProvider.isPlaying ? MdiIcons.pause : MdiIcons.play,
             ),
@@ -323,7 +311,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Botões para redes sociais e telefone.
+  /// Builds the row of social and phone buttons.
   Widget _buildSocialButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -332,12 +320,12 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
           icon: MdiIcons.whatsapp,
           color: Colors.green,
           onPressed: () async {
-            final String telefone = '+34614126301';
-            final String message = "Bendiciones...";
+            const String phone = '+34614126301';
+            const String message = "Bendiciones...";
             await OurSocialContacts.openLink(
               context,
-              'whatsapp://send?phone=$telefone&text=${Uri.encodeComponent(message)}',
-              'https://wa.me/$telefone?text=${Uri.encodeComponent(message)}',
+              'whatsapp://send?phone=$phone&text=${Uri.encodeComponent(message)}',
+              'https://wa.me/$phone?text=${Uri.encodeComponent(message)}',
               'WhatsApp',
             );
           },
@@ -384,7 +372,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Botão individual de rede social.
+  /// Builds an individual social button.
   Widget _buildSocialButton({
     required IconData icon,
     required Color color,
@@ -398,32 +386,29 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Mostra alerta de erro de permissão de telefone.
+  /// Shows an alert dialog if phone permission is denied.
   void _showPhonePermissionError() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Erro'),
-            content: const Text('Permissão para ligação não concedida.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: const Text('Permissão para ligação não concedida.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 
-  /// Overlay exibido quando não há conexão com a internet.
+  /// Overlay shown when there is no internet connection.
   Widget _buildConnectionErrorOverlay() {
     return Container(
-      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.7),
       child: Center(
         child: Card(
-          // ignore: deprecated_member_use
           color: Colors.grey[900]?.withOpacity(0.85),
           elevation: 12,
           shape: RoundedRectangleBorder(
@@ -462,7 +447,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                   ),
                   onPressed: _checkConnection,
                   child: const Text(
-                    'Intentar de novo',
+                    'Tentar Novamente',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -474,14 +459,12 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Overlay exibido quando há erro no streaming da rádio.
+  /// Overlay shown when there is a streaming error.
   Widget _buildStreamingErrorOverlay() {
     return Container(
-      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.7),
       child: Center(
         child: Card(
-          // ignore: deprecated_member_use
           color: Colors.grey[900]?.withOpacity(0.85),
           elevation: 12,
           shape: RoundedRectangleBorder(
@@ -494,9 +477,9 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'El servidor de la radio no está disponible en este momento.\nInténtalo de nuevo más tarde',
+              children: const [
+                Text(
+                  'O servidor de rádio não está disponível no momento.\nPor favor, tente novamente mais tarde.',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -504,7 +487,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 18),
+                SizedBox(height: 18),
               ],
             ),
           ),
@@ -513,7 +496,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     );
   }
 
-  /// Overlay exibido durante o carregamento do player.
+  /// Overlay shown while the player is loading.
   Widget _buildLoadingOverlay() {
     return Container(
       color: Colors.black45,
@@ -523,26 +506,38 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Cargando rádio...', style: TextStyle(color: Colors.white)),
+            Text('Carregando rádio...', style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
     );
   }
+}
 
-  /// Card para acessar programas radiais.
-  Widget _buildCard({
-    required BuildContext context,
-    required String imagePath,
-    required String buttonLabel,
-    required VoidCallback onTap,
-    required double cardHeight,
-    required double buttonWidth,
-    required double buttonTop,
-    required double buttonRight,
-  }) {
+/// Private widget for the radio section card.
+class _RadioSectionCard extends StatelessWidget {
+  final String imagePath;
+  final String buttonLabel;
+  final VoidCallback onTap;
+  final double cardHeight;
+  final double buttonWidth;
+  final double buttonTop;
+  final double buttonRight;
+
+  const _RadioSectionCard({
+    required this.imagePath,
+    required this.buttonLabel,
+    required this.onTap,
+    required this.cardHeight,
+    required this.buttonWidth,
+    required this.buttonTop,
+    required this.buttonRight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
-      color: const Color.fromARGB(255, 141, 59, 59),
+      color: kCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         width: double.infinity,
@@ -559,7 +554,6 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,
-                  // ignore: deprecated_member_use
                   color: Colors.transparent.withOpacity(0.1),
                   colorBlendMode: BlendMode.darken,
                 ),
@@ -578,11 +572,11 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    minimumSize: Size(40, 30),
+                    minimumSize: const Size(40, 30),
                   ),
                   child: Text(
                     buttonLabel,
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
               ),

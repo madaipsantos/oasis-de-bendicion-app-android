@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 
-// Classe de constantes para centralizar informações do rádio
+/// Centralized radio constants.
 class RadioConstants {
   static const String streamUrl = 'https://stream-152.zeno.fm/5qrh7beqizzvv';
   static const String defaultTitle = 'Oasis Rádio';
@@ -12,37 +12,34 @@ class RadioConstants {
   static const String artistName = 'Oasis de Bendición';
 }
 
-// Provider responsável por controlar o player de áudio e seu estado
+/// Provider responsible for controlling the audio player and its state.
 class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   String _currentTitle = RadioConstants.defaultTitle;
   String get currentTitle => _currentTitle;
 
-  AudioPlayer _player = AudioPlayer(); // Instância do player
-  List<StreamSubscription> subscriptions = []; // Lista de listeners ativos
-  AudioHandler? _audioHandler; // Handler para integração com notificações e controles do sistema
+  AudioPlayer _player = AudioPlayer();
+  List<StreamSubscription> subscriptions = [];
+  AudioHandler? _audioHandler;
 
-  // Estados internos do player
+  // Internal player states
   bool _isPlaying = false;
   bool _isLoading = false;
   bool _initialized = false;
-  bool get initialized => _initialized;
   bool _isFirstPlay = true;
   bool _streamingAvailable = true;
-  bool get streamingAvailable => _streamingAvailable;
   bool _streamingError = false;
-  bool get streamingError => _streamingError;
 
-  // Variáveis de controle para listeners e erros
+  // Control variables for listeners and errors
   bool _triedToLoad = false;
   bool _stoppedManually = false;
   bool _errorHandled = false;
 
+  /// Constructor: observes app lifecycle changes.
   AudioPlayerProvider() {
-    // Observa mudanças no ciclo de vida do app
     WidgetsBinding.instance.addObserver(this);
   }
 
-  // Inicializa o AudioService e o handler para integração com notificações
+  /// Initializes the AudioService and handler for system notifications.
   Future<void> initAudioService() async {
     if (_audioHandler != null) return;
     _audioHandler = await AudioService.init(
@@ -60,8 +57,11 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool get isPlaying => _isPlaying;
   bool get isLoading => _isLoading;
   double get volume => _player.volume;
+  bool get streamingAvailable => _streamingAvailable;
+  bool get streamingError => _streamingError;
+  bool get initialized => _initialized;
 
-  // Prepara o player para tocar, reinicializando tudo
+  /// Prepares the player for playback, reinitializing everything.
   Future<void> preparePlayer() async {
     _streamingAvailable = true;
     _streamingError = false;
@@ -69,28 +69,28 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     _initialized = false;
     _isFirstPlay = true;
     _isPlaying = false;
-    notifyListeners();
 
-    // Remove listeners antigos
+    // Remove old listeners
     for (final sub in subscriptions) {
       await sub.cancel();
     }
     subscriptions.clear();
 
-    // Descarta player antigo e cria um novo
+    // Dispose old player and create a new one
     _player.dispose();
     _player = AudioPlayer();
 
-    // Atualiza o player do handler, se já existe
-    if (_audioHandler != null && _audioHandler is RadioAudioHandler) {
+    // Update handler's player if it exists
+    if (_audioHandler is RadioAudioHandler) {
       (_audioHandler as RadioAudioHandler).updatePlayer(_player);
     }
 
-    // Inicializa o player (configura sessão, listeners, etc)
+    // Initialize player (session, listeners, etc)
     await _initializePlayer();
+    notifyListeners();
   }
 
-  // Inicializa o player e listeners
+  /// Initializes the player and listeners.
   Future<void> _initializePlayer() async {
     if (_initialized) return;
     _initialized = true;
@@ -102,14 +102,14 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     _setupMetadataListener();
   }
 
-  // Reseta variáveis de controle de erro e estado
+  /// Resets error and state control variables.
   void _resetControlVariables() {
     _triedToLoad = false;
     _stoppedManually = false;
     _errorHandled = false;
   }
 
-  // Adiciona listeners para eventos do player
+  /// Adds listeners for player events.
   void _setupPlayerListeners() {
     subscriptions.add(_player.playbackEventStream.listen(
       _handlePlaybackEvent,
@@ -119,30 +119,30 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     subscriptions.add(_player.playerStateStream.listen(_handlePlayerStateChange));
   }
 
-  // Lida com eventos de reprodução (buffer, erro, idle, etc)
+  /// Handles playback events (buffer, error, idle, etc).
   void _handlePlaybackEvent(PlaybackEvent event) {
-    // Detecta parada manual
-    if (event.processingState == ProcessingState.idle && _isPlaying == false && _triedToLoad) {
+    // Detect manual stop
+    if (event.processingState == ProcessingState.idle && !_isPlaying && _triedToLoad) {
       _stoppedManually = true;
     }
 
-    // Marca que tentou carregar
-    if ((event.processingState == ProcessingState.loading || event.processingState == ProcessingState.buffering)) {
+    // Mark that loading was attempted
+    if (event.processingState == ProcessingState.loading || event.processingState == ProcessingState.buffering) {
       _triedToLoad = true;
     }
 
-    // Detecta erro de streaming
+    // Detect streaming error
     if (_triedToLoad && event.processingState == ProcessingState.idle && _streamingAvailable && !_stoppedManually) {
       _setStreamingError();
     }
 
-    // Limpa erro se foi parada manual
+    // Clear error if manually stopped
     if (_stoppedManually) {
       _clearStreamingError();
     }
   }
 
-  // Lida com erros do player
+  /// Handles player errors.
   void _handlePlaybackError(dynamic error) {
     if (!_errorHandled) {
       _errorHandled = true;
@@ -150,13 +150,13 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  // Atualiza estados de playing/loading conforme mudanças do player
+  /// Updates playing/loading states according to player changes.
   void _handlePlayerStateChange(PlayerState state) {
     final playing = state.playing;
     final loading = state.processingState == ProcessingState.loading ||
         state.processingState == ProcessingState.buffering;
 
-    // Só atualiza loading se não houver erro de streaming
+    // Only update loading if no streaming error
     if (!_streamingError) {
       if (_isPlaying != playing || _isLoading != loading) {
         _isPlaying = playing;
@@ -164,7 +164,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
         notifyListeners();
       }
     } else {
-      // Se há erro de streaming, mantém loading como false
+      // If streaming error, keep loading as false
       if (_isPlaying != playing || _isLoading != false) {
         _isPlaying = playing;
         _isLoading = false;
@@ -173,7 +173,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  // Configura a sessão de áudio do sistema (para controle de foco, etc)
+  /// Configures the system audio session (for focus, etc).
   Future<void> _configureAudioSession() async {
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration.music());
@@ -181,7 +181,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
-  // Define a fonte de áudio (stream da rádio)
+  /// Sets the audio source (radio stream).
   Future<void> _setAudioSource() async {
     try {
       await _player.setAudioSource(
@@ -190,23 +190,24 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
       _setStreamingSuccess();
     } catch (e) {
       _setStreamingError();
-      return;
     }
   }
 
-  // Listener para metadados ICY (título da música, etc)
+  /// Listens for ICY metadata (song title, etc).
   void _setupMetadataListener() {
     subscriptions.add(_player.icyMetadataStream.listen((icy) {
       final title = icy?.info?.title;
       if (title != null) {
         _currentTitle = title;
-        (_audioHandler as RadioAudioHandler).updateCurrentMediaItem(title: title);
+        if (_audioHandler is RadioAudioHandler) {
+          (_audioHandler as RadioAudioHandler).updateCurrentMediaItem(title: title);
+        }
         notifyListeners();
       }
     }));
   }
 
-  // Métodos de gerenciamento de estado
+  /// Sets streaming error state.
   void _setStreamingError() {
     _streamingAvailable = false;
     _streamingError = true;
@@ -214,11 +215,13 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
+  /// Clears streaming error state.
   void _clearStreamingError() {
     _streamingError = false;
     notifyListeners();
   }
 
+  /// Sets streaming success state.
   void _setStreamingSuccess() {
     _isLoading = false;
     _streamingAvailable = true;
@@ -226,21 +229,23 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
+  /// Sets loading state.
   void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
+    if (_isLoading != loading) {
+      _isLoading = loading;
+      notifyListeners();
+    }
   }
 
-  // Helper para saber se pode tocar
+  /// Returns true if playback is possible.
   bool get _canPlay => _streamingAvailable && !_streamingError;
 
-  // Alterna entre play e pause
+  /// Toggles between play and pause.
   void togglePlayPause() {
     if (_isPlaying) {
       _audioHandler?.pause();
     } else {
       if (_canPlay) {
-        // Exibe loading durante a reconexão
         _setLoading(true);
         if (_isFirstPlay) {
           _player.setVolume(1.0);
@@ -251,7 +256,7 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  // Altera o volume do player
+  /// Changes the player volume.
   Future<void> setVolume(double volume) async {
     if (volume >= 0.0 && volume <= 1.0) {
       await _player.setVolume(volume);
@@ -259,17 +264,15 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  // Para completamente a reprodução e reseta estados
+  /// Completely stops playback and resets states.
   Future<void> stopCompletely() async {
-    if (_audioHandler != null) {
-      await _audioHandler!.stop();
-    }
+    await _audioHandler?.stop();
     _isPlaying = false;
     _isFirstPlay = true;
     notifyListeners();
   }
 
-  // Lida com mudanças no ciclo de vida do app (ex: fechar app)
+  /// Handles app lifecycle changes (e.g., app closed).
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached && _isPlaying) {
@@ -277,36 +280,35 @@ class AudioPlayerProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  // Limpa listeners e recursos ao destruir o provider
+  /// Cleans up listeners and resources when disposing the provider.
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     for (final sub in subscriptions) {
       sub.cancel();
     }
-    subscriptions.clear();
     _player.dispose();
     super.dispose();
   }
 }
 
-// Handler para integração com notificações e controles do sistema operacional
+/// Handler for integration with system notifications and controls.
 class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
   AudioPlayer _player;
 
+  /// Creates a handler for the given [AudioPlayer].
   RadioAudioHandler(this._player) {
     _listenPlayerStreams();
     _setInitialMediaItem();
   }
 
-  // Atualiza o player usado pelo handler (quando reinicializa)
+  /// Updates the player used by the handler (when reinitializing).
   void updatePlayer(AudioPlayer newPlayer) {
-    // Não é necessário remover listeners do handler, pois são removidos em preparePlayer
     _player = newPlayer;
     _listenPlayerStreams();
   }
 
-  // Adiciona listeners para atualizar o estado do sistema (notificações, controles)
+  /// Adds listeners to update system state (notifications, controls).
   void _listenPlayerStreams() {
     _player.playbackEventStream.listen((event) {
       playbackState.add(playbackState.value.copyWith(
@@ -333,7 +335,7 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     });
   }
 
-  // Define o item de mídia inicial (usado nas notificações)
+  /// Sets the initial media item (used in notifications).
   void _setInitialMediaItem() {
     mediaItem.add(MediaItem(
       id: RadioConstants.streamUrl,
@@ -343,7 +345,7 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     ));
   }
 
-  // Atualiza o item de mídia com o título atual (ex: música tocando)
+  /// Updates the media item with the current title (e.g., currently playing song).
   void updateCurrentMediaItem({required String title}) {
     mediaItem.add(MediaItem(
       id: RadioConstants.streamUrl,
@@ -352,11 +354,12 @@ class RadioAudioHandler extends BaseAudioHandler with SeekHandler {
     ));
   }
 
-  // Implementações dos comandos básicos do player
   @override
   Future<void> play() => _player.play();
+
   @override
   Future<void> pause() => _player.pause();
+
   @override
   Future<void> stop() async {
     await _player.stop();

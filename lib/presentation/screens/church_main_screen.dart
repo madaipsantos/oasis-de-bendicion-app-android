@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:webradiooasis/config/router/app_router.dart';
-//import 'package:webradiooasis/utils/app_info.dart';
 
-/// Tela principal da igreja, exibe cards para missão, visão, serviços e contatos.
-/// Possui navegação inferior para alternar entre a área da igreja e a área da rádio.
+// Constants
+const Color kCardColor = Color.fromARGB(255, 141, 59, 59);
+const Color kButtonColor = Colors.red;
+const Color kButtonTextColor = Colors.white;
+const double kAppBarFontSize = 27.0;
+const double kButtonFontSize = 16.0;
+const double kCardBorderRadius = 10.0;
+const double kButtonBorderRadius = 4.0;
+const double kCardPadding = 4.0;
+const double kScreenPadding = 20.0;
+const double kButtonMinWidth = 40.0;
+const double kButtonMinHeight = 30.0;
+
+/// Main screen for the church section.
+/// Displays cards for mission, vision, services, and contacts.
+/// Includes bottom navigation to switch between church and radio areas.
 class ChurchMainScreen extends StatefulWidget {
   const ChurchMainScreen({super.key});
 
@@ -12,13 +25,12 @@ class ChurchMainScreen extends StatefulWidget {
 }
 
 class _ChurchMainScreenState extends State<ChurchMainScreen> {
-  final int _selectedIndex = 0; // Church tab is always selected in this screen
-  // String _appVersion = '';
+  final int _selectedIndex = 0; // Church tab is always selected on this screen
 
   @override
   void initState() {
     super.initState();
-    // Exemplo de como obter a versão do app (comentado)
+    // Example: Fetch app version if needed
     // AppInfo.getAppVersion().then((version) {
     //   setState(() {
     //     _appVersion = version;
@@ -26,9 +38,9 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     // });
   }
 
-  /// Navegação entre as abas de Igreja e Rádio.
+  /// Handles bottom navigation tap events.
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // No action if already selected
+    if (index == _selectedIndex) return;
 
     switch (index) {
       case 0:
@@ -42,12 +54,12 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtém dimensões da tela para responsividade
+    // Get screen dimensions for responsiveness
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double cardHeight = screenHeight * 0.15; 
-    final double buttonWidth = screenWidth * 0.34; 
-    final double buttonTop = 0.0; 
+    final double cardHeight = screenHeight * 0.15;
+    final double buttonWidth = screenWidth * 0.34;
+    final double buttonTop = 0.0;
     final double buttonRight = 5.0;
 
     return Scaffold(
@@ -55,7 +67,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
       appBar: AppBar(
         title: Text(
           "Oasis de Bendición",
-          style: TextStyle(fontSize: 27.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: kAppBarFontSize, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
@@ -63,7 +75,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
       ),
       body: Stack(
         children: [
-          // Imagem de fundo
+          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -72,15 +84,14 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
               ),
             ),
           ),
-          // Conteúdo rolável com os cards principais
+          // Scrollable content with main cards
           SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(kScreenPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20),
-                  // Card Missão
+                  const SizedBox(height: 20),
                   _buildCard(
                     context: context,
                     imagePath: 'assets/santabiblia.jpg',
@@ -93,8 +104,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonTop: buttonTop,
                     buttonRight: buttonRight,
                   ),
-                  SizedBox(height: 15),
-                  // Card Visão
+                  const SizedBox(height: 15),
                   _buildCard(
                     context: context,
                     imagePath: 'assets/vision.jpg',
@@ -107,8 +117,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonTop: buttonTop,
                     buttonRight: buttonRight,
                   ),
-                  SizedBox(height: 15),
-                  // Card Serviços
+                  const SizedBox(height: 15),
                   _buildCard(
                     context: context,
                     imagePath: 'assets/discipulado.jpg',
@@ -121,8 +130,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                     buttonTop: buttonTop,
                     buttonRight: buttonRight,
                   ),
-                  SizedBox(height: 15),
-                  // Card Contatos
+                  const SizedBox(height: 15),
                   _buildCard(
                     context: context,
                     imagePath: 'assets/google_maps_alt.png',
@@ -141,13 +149,13 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
           ),
         ],
       ),
-      // Barra de navegação inferior para alternar entre Igreja e Rádio
+      // Bottom navigation bar to switch between Church and Radio
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.red,
+        selectedItemColor: kButtonColor,
         unselectedItemColor: Colors.white,
         onTap: _onItemTapped,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.church), label: "Iglesia"),
           BottomNavigationBarItem(icon: Icon(Icons.radio), label: "Radio"),
         ],
@@ -155,7 +163,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     );
   }
 
-  /// Constrói um card com imagem e botão, usado para cada seção (Missão, Visão, etc).
+  /// Builds a card with image and button for each section.
   Widget _buildCard({
     required BuildContext context,
     required String imagePath,
@@ -167,19 +175,19 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     required double buttonRight,
   }) {
     return Card(
-      color: const Color.fromARGB(255, 141, 59, 59),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      color: kCardColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kCardBorderRadius)),
       child: Container(
         width: double.infinity,
         height: cardHeight,
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(kCardPadding),
         child: Stack(
           children: [
-            // Imagem de fundo do card, clicável
+            // Card background image, clickable
             GestureDetector(
               onTap: onTap,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(kCardBorderRadius),
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
@@ -188,7 +196,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                 ),
               ),
             ),
-            // Botão sobreposto no canto superior direito do card
+            // Button positioned at the top right corner of the card
             Positioned(
               top: buttonTop,
               right: buttonRight,
@@ -197,16 +205,16 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+                    backgroundColor: kButtonColor,
+                    foregroundColor: kButtonTextColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(kButtonBorderRadius),
                     ),
-                    minimumSize: Size(40, 30),
+                    minimumSize: const Size(kButtonMinWidth, kButtonMinHeight),
                   ),
                   child: Text(
                     buttonLabel,
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: const TextStyle(fontSize: kButtonFontSize, color: kButtonTextColor),
                   ),
                 ),
               ),
