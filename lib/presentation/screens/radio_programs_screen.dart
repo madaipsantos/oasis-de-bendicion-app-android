@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+// Constants
+const double kCardRadius = 15.0;
+const double kCardBorder = 4.0;
+const double kAppBarFontSize = 27.0;
+const double kTitleFontSize = 22.0;
+const double kTextFontSize = 17.0;
+const double kTimeFontSize = 17.0;
+const Color kBorderColor = Color.fromARGB(255, 141, 59, 59);
+
+/// Screen that displays the main radio programs and their schedules.
 class RadioProgramsScreen extends StatefulWidget {
   const RadioProgramsScreen({super.key});
 
@@ -15,18 +25,14 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
     final double cardTop = screenHeight * 0.03;
     final double cardSide = screenWidth * 0.04;
     final double cardHeight = screenHeight * 0.15;
-    final double cardRadius = 15.0;
-    final double cardBorder = 4.0;
-    final double tituloFont = 22.0;
-    final double textoFont = 17.0;
-    final double textoLargura = screenWidth * 0.90;
+    final double textWidth = screenWidth * 0.90;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Oasis de Bendición",
-          style: TextStyle(fontSize: 27.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: kAppBarFontSize, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
@@ -34,6 +40,7 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
       ),
       body: Stack(
         children: [
+          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -42,6 +49,7 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
               ),
             ),
           ),
+          // Scrollable content with radio program cards
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -50,40 +58,28 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildServiceCard(
+                  _buildProgramCard(
                     title: "Conecta2 @ Jesus",
                     imagePath: "assets/conectados.png",
                     time: "Lunes - Viernes 12:30H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  _buildServiceCard(
+                  _buildProgramCard(
                     title: "Pan Fresco",
                     imagePath: "assets/panFresco.jpg",
                     time: "Lunes & Miércoles 20:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  _buildServiceCard(
+                  _buildProgramCard(
                     title: "Sinergia",
                     imagePath: "assets/synergia.jpg",
                     time: "Sábados 17:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -93,25 +89,21 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
     );
   }
 
-  Widget _buildServiceCard({
+  /// Builds a card for each radio program, displaying title, image, and time.
+  Widget _buildProgramCard({
     required String title,
     required String imagePath,
     String? description,
     required String time,
     required double cardHeight,
-    required double cardRadius,
-    required double cardBorder,
-    required double tituloFont,
-    required double textoFont,
-    required double textoLargura,
+    required double textWidth,
   }) {
     return Card(
-      // ignore: deprecated_member_use
       color: Colors.black.withOpacity(0.01),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(cardRadius),
+        borderRadius: BorderRadius.circular(kCardRadius),
       ),
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -120,23 +112,23 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
             Center(
               child: Text(
                 title,
-                style: TextStyle(
-                  fontSize: tituloFont,
+                style: const TextStyle(
+                  fontSize: kTitleFontSize,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: double.infinity,
               height: cardHeight,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(cardRadius),
+                borderRadius: BorderRadius.circular(kCardRadius),
                 border: Border.all(
-                  color: Color.fromARGB(255, 141, 59, 59),
-                  width: cardBorder,
+                  color: kBorderColor,
+                  width: kCardBorder,
                 ),
                 image: DecorationImage(
                   image: AssetImage(imagePath),
@@ -145,23 +137,23 @@ class _RadioProgramsScreenState extends State<RadioProgramsScreen> {
               ),
             ),
             if (description != null) ...[
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
-                width: textoLargura,
+                width: textWidth,
                 child: Text(
                   description,
-                  style: TextStyle(fontSize: textoFont, color: Colors.white),
+                  style: const TextStyle(fontSize: kTextFontSize, color: Colors.white),
                   textAlign: TextAlign.center,
                   softWrap: true,
                 ),
               ),
             ],
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Center(
               child: Text(
                 time,
-                style: TextStyle(
-                  fontSize: 17,
+                style: const TextStyle(
+                  fontSize: kTimeFontSize,
                   color: Colors.white,
                   fontWeight: FontWeight.normal,
                 ),

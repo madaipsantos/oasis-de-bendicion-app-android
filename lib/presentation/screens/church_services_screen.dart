@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Tela que exibe os horários e descrições dos principais cultos e serviços da igreja.
+// Constants
+const double kCardRadius = 15.0;
+const double kCardBorder = 4.0;
+const double kAppBarFontSize = 27.0;
+const double kTitleFontSize = 22.0;
+const double kTextFontSize = 17.0;
+const double kTimeFontSize = 17.0;
+const Color kBorderColor = Color.fromARGB(255, 141, 59, 59);
+
+/// Screen that displays the main church services and schedules.
 class ChurchServicesScreen extends StatefulWidget {
   const ChurchServicesScreen({super.key});
 
@@ -11,24 +20,20 @@ class ChurchServicesScreen extends StatefulWidget {
 class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
   @override
   Widget build(BuildContext context) {
-    // Obtém dimensões da tela para responsividade
+    // Get screen dimensions for responsiveness
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double cardTop = screenHeight * 0.03;
     final double cardSide = screenWidth * 0.04;
     final double cardHeight = screenHeight * 0.15;
-    final double cardRadius = 15.0;
-    final double cardBorder = 4.0;
-    final double tituloFont = 22.0;
-    final double textoFont = 17.0;
-    final double textoLargura = screenWidth * 0.90;
+    final double textWidth = screenWidth * 0.90;
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Oasis de Bendición",
-          style: TextStyle(fontSize: 27.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: kAppBarFontSize, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
@@ -36,7 +41,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
       ),
       body: Stack(
         children: [
-          // Imagem de fundo
+          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -45,7 +50,7 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
               ),
             ),
           ),
-          // Conteúdo rolável com os cards dos cultos
+          // Scrollable content with service cards
           Positioned(
             top: cardTop,
             left: cardSide,
@@ -54,65 +59,38 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Card Culto Familiar
                   _buildServiceCard(
-                    context: context,
                     title: "Culto Familiar",
                     imagePath: "assets/vision.jpg",
-                    description:
-                        "Donde toda la familia está convocada a una experiencia con el Espíritu Santo.",
+                    description: "Donde toda la familia está convocada a una experiencia con el Espíritu Santo.",
                     time: "Domingo 12:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  // Card Culto de Oração
                   _buildServiceCard(
-                    context: context,
                     title: "Culto de Oración",
                     imagePath: "assets/oracion_culto.png",
-                    description:
-                        "Tiempo donde nos conectamos en Clamor al Padre.",
+                    description: "Tiempo donde nos conectamos en Clamor al Padre.",
                     time: "Martes 20:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  // Card Oração da Manhã
                   _buildServiceCard(
-                    context: context,
                     title: "Oración de la Mañana",
                     imagePath: "assets/oracion.jpg",
                     time: "Miércoles 06:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  // Card Discipulado
                   _buildServiceCard(
-                    context: context,
                     title: "Discipulado",
                     imagePath: "assets/discipulado.jpg",
-                    description:
-                        "Un espacio donde aprendemos más acerca de Jesús y el ser sus discípulos.",
+                    description: "Un espacio donde aprendemos más acerca de Jesús y el ser sus discípulos.",
                     time: "Jueves 20:00H",
                     cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    tituloFont: tituloFont,
-                    textoFont: textoFont,
-                    textoLargura: textoLargura,
+                    textWidth: textWidth,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -122,27 +100,21 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
     );
   }
 
-  /// Constrói um card para cada culto/serviço, exibindo título, imagem, descrição e horário.
+  /// Builds a card for each service, displaying title, image, description, and time.
   Widget _buildServiceCard({
-    required BuildContext context,
     required String title,
     required String imagePath,
     String? description,
     required String time,
     required double cardHeight,
-    required double cardRadius,
-    required double cardBorder,
-    required double tituloFont,
-    required double textoFont,
-    required double textoLargura,
+    required double textWidth,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 16),
+      margin: const EdgeInsets.symmetric(vertical: 16),
       child: Card(
-        // ignore: deprecated_member_use
         color: Colors.black.withOpacity(0.01),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(cardRadius),
+          borderRadius: BorderRadius.circular(kCardRadius),
         ),
         elevation: 5,
         child: Padding(
@@ -152,23 +124,23 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
               Center(
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontSize: tituloFont,
+                  style: const TextStyle(
+                    fontSize: kTitleFontSize,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 height: cardHeight,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(cardRadius),
+                  borderRadius: BorderRadius.circular(kCardRadius),
                   border: Border.all(
-                    color: Color.fromARGB(255, 141, 59, 59),
-                    width: cardBorder,
+                    color: kBorderColor,
+                    width: kCardBorder,
                   ),
                   image: DecorationImage(
                     image: AssetImage(imagePath),
@@ -177,25 +149,24 @@ class _ChurchServicesScreenState extends State<ChurchServicesScreen> {
                 ),
               ),
               if (description != null) ...[
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 SizedBox(
-                  width: textoLargura,
+                  width: textWidth,
                   child: Text(
                     description,
-                    style: TextStyle(fontSize: textoFont, color: Colors.white),
+                    style: const TextStyle(fontSize: kTextFontSize, color: Colors.white),
                     textAlign: TextAlign.center,
                     softWrap: true,
                   ),
                 ),
               ],
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Center(
                 child: Text(
                   time,
-                  style: TextStyle(
-                    fontSize: 17,
+                  style: const TextStyle(
+                    fontSize: kTimeFontSize,
                     color: Colors.white,
-                    fontWeight: FontWeight.normal,
                   ),
                   textAlign: TextAlign.center,
                 ),
