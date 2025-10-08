@@ -53,17 +53,26 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
       _checkingConnection = true;
     });
     final service = ConnectionService();
-    final result = await service.hasConnection();
-    setState(() {
-      _hasConnection = result;
-      _checkingConnection = false;
-    });
+    bool result = false;
+    try {
+      result = await service.hasConnection();
+      setState(() {
+        _hasConnection = result;
+        _checkingConnection = false;
+      });
+    } catch (e) {
+      // Se ocorrer uma exceção, consideramos que não há conexão
+      setState(() {
+        _hasConnection = false;
+        _checkingConnection = false;
+      });
+    }
     final audioPlayerProvider = Provider.of<AudioPlayerProvider>(
       // ignore: use_build_context_synchronously
       context,
       listen: false,
     );
-    if (result) {
+    if (_hasConnection) {
       if (!audioPlayerProvider.initialized && !audioPlayerProvider.isPlaying) {
         await audioPlayerProvider.preparePlayer();
       }
@@ -79,7 +88,12 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
     _connectionMonitorTimer?.cancel();
     _connectionMonitorTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       final service = ConnectionService();
-      final result = await service.hasConnection();
+      bool result = false;
+      try {
+        result = await service.hasConnection();
+      } catch (e) {
+        result = false;
+      }
       if (!result && _hasConnection) {
         setState(() {
           _hasConnection = false;
