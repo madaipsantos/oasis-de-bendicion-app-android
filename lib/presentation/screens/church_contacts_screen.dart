@@ -1,56 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:webradiooasis/core/utils/our_social_contacts.dart';
+// Importação simulada para ícones de redes sociais (em um projeto real, você usaria 'font_awesome_flutter')
+// Usaremos os ícones padrões do Material para manter a compatibilidade no Canvas.
 
-// Constants
-const String kGeoUrl =
-    "geo:43.5322026,-5.6611196?q=Carretera Carbonara, 2227. Gijón, Asturias - España";
-const String kGoogleMapsUrl =
-    "https://www.google.com/maps/search/?api=1&query=Carretera+Carbonara,+2227,+Gij%C3%B3n,+Asturias+-+Espa%C3%B1a";
-const String kChurchAddress = "Carretera Carbonara, 2227. Gijón, Asturias - España";
-const String kPhoneNumber = "+34 614 126 301";
-const String kPhoneUrl = "tel:+34614126301";
-const String kWhatsAppUrl = 'https://wa.me/+34614126301?text=';
-const String kWhatsAppAppUrl = 'whatsapp://send?phone=+34614126301&text=';
+// Constantes copiadas da tela principal para garantir a consistência
+const Color kCardColor = Color.fromARGB(255, 141, 59, 59); // Cor principal
+const Color kButtonColor = Colors.red;
+const double kScreenPadding = 20.0;
+const double kCardBorderRadius = 10.0; // Mantendo o valor do layout base (10.0)
 
-/// Screen that displays church contacts and social media.
-/// Includes address, social media, WhatsApp, and phone contact options.
-class ChurchContactsScreen extends StatefulWidget {
-  const ChurchContactsScreen({super.key});
+/// Tela dedicada aos Contatos e Redes Sociais da Igreja.
+class ContactScreen extends StatelessWidget {
+  const ContactScreen({super.key});
 
-  @override
-  State<ChurchContactsScreen> createState() => _ChurchContactsScreenState();
-}
-
-class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions for responsiveness
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-
-    // Card and text style constants
-    final double cardRadius = 15.0;
-    final double cardBorder = 4.0;
-    final double cardTop = screenHeight * 0.03;
-    final double cardSide = screenWidth * 0.04;
-    final double cardHeight = screenHeight * 0.15;
-    final double titleFontSize = 22.0;
-    final double textFontSize = 17.0;
-    final double textWidth = screenWidth * 0.90;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text(
-          "Oasis de Bendición",
-          style: TextStyle(fontSize: 27.0, fontWeight: FontWeight.bold),
+          "Contato e Redes",
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+
+      // -----------------------------------------------------------
+      // ESTRUTURA STACK REPLICADA DO ChurchMainScreen
+      // -----------------------------------------------------------
+      backgroundColor: Colors.grey[200],
       body: Stack(
         children: [
           // Background image
@@ -62,34 +47,107 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
               ),
             ),
           ),
-          // Scrollable responsive content
-          Positioned(
-            top: cardTop,
-            left: cardSide,
-            right: cardSide,
-            bottom: 0,
+
+          // Contenido principal
+          Padding(
+            padding: EdgeInsets.all(screenWidth * 0.055),
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Address and map card
-                  _buildServiceCard(
-                    title: "Address",
-                    imagePath: "assets/mapa.png",
-                    description: kChurchAddress,
-                    geoUrl: kGeoUrl,
-                    googleMapsUrl: kGoogleMapsUrl,
-                    cardHeight: cardHeight,
-                    cardRadius: cardRadius,
-                    cardBorder: cardBorder,
-                    titleFontSize: titleFontSize,
-                    textFontSize: textFontSize,
-                    textWidth: textWidth,
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      "Contactos",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenWidth * 0.080,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(0, 2),
+                            blurRadius: 4,
+                            color: Colors.black.withOpacity(0.5),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  // Social media card
-                  _buildSocialMediaCard(cardRadius: cardRadius),
-                  // Contact card (WhatsApp and phone)
-                  _buildContactCard(cardRadius: cardRadius),
-                  const SizedBox(height: 20),
+                  Container(
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          height: 1.5,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red.shade400.withOpacity(0.2),
+                                Colors.red.shade400.withOpacity(0.7),
+                                Colors.red.shade400.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade400.withOpacity(0.6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          height: 1.5,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red.shade400.withOpacity(0.2),
+                                Colors.red.shade400.withOpacity(0.7),
+                                Colors.red.shade400.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+
+                  // -----------------------------------------------------------
+                  // 1. CARTÃO DE INFORMAÇÕES DE CONTATO
+                  // -----------------------------------------------------------
+                  _buildContactInfoCard(screenWidth, context),
+                  
+                  const SizedBox(height: 30),
+
+                  // -----------------------------------------------------------
+                  // 2. TÍTULO REDES SOCIAIS
+                  // -----------------------------------------------------------
+                  Text(
+                    "Síguenos en las redes sociales.",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenWidth * 0.06,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // -----------------------------------------------------------
+                  // 3. BOTÕES DE REDES SOCIAIS
+                  // -----------------------------------------------------------
+                  _buildSocialMediaButtons(context),
+
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -99,268 +157,200 @@ class _ChurchContactsScreenState extends State<ChurchContactsScreen> {
     );
   }
 
-  /// Card displaying address and map image, clickable to open maps app.
-  Widget _buildServiceCard({
-    required String title,
-    required String imagePath,
-    required String geoUrl,
-    required String googleMapsUrl,
-    required double cardHeight,
-    required double cardRadius,
-    required double cardBorder,
-    required double titleFontSize,
-    required double textFontSize,
-    required double textWidth,
-    String? description,
-  }) {
-    return Card(
-      color: Colors.black.withOpacity(0.01),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(cardRadius),
+  /// Constrói o cartão principal com telefone e email.
+  Widget _buildContactInfoCard(double screenWidth, BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(color: Color.fromARGB(255, 141, 59, 59).withOpacity(0.5), width: 1.2),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.black.withOpacity(0.7),
+            Colors.black.withOpacity(0.5),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.35),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            _buildTitle(title, fontSize: titleFontSize),
-            const SizedBox(height: 5),
-            _buildClickableImageCard(
-              imagePath,
-              geoUrl,
-              googleMapsUrl,
-              cardHeight,
-              cardRadius,
-              cardBorder,
-            ),
-            if (description != null) ...[
-              const SizedBox(height: 10),
-              SizedBox(
-                width: textWidth,
-                child: Text(
-                  description,
-                  style: TextStyle(fontSize: textFontSize, color: Colors.white),
-                  textAlign: TextAlign.center,
-                  softWrap: true,
+      child: Column(
+        children: [
+          // Telefone (Simulando ligação direta)
+          _buildContactRow(
+            icon: Icons.phone,
+            label: "Telefone (Ligação):",
+            value: "(XX) XXXX-XXXX",
+            actionText: "Ligar",
+            onTap: () => _showSnackBar(context, "Abrindo discador para (XX) XXXX-XXXX"),
+            screenWidth: screenWidth,
+          ),
+          const Divider(color: Colors.white24, height: 25), // Divisor após Ligar
+          // WhatsApp (Simulando envio de mensagem) - NOVO!
+          _buildContactRow(
+            icon: Icons.chat_bubble_outline, // Ícone de chat para WhatsApp
+            label: "WhatsApp (Mensagem):",
+            value: "(XX) XXXX-XXXX",
+            actionText: "Mensagem",
+            onTap: () => _showSnackBar(context, "Abrindo WhatsApp para enviar mensagem..."),
+            screenWidth: screenWidth,
+          ),
+          const Divider(color: Colors.white24, height: 25), // Divisor antes do Email
+          // Email (Simulando envio de email)
+          _buildContactRow(
+            icon: Icons.email,
+            label: "E-mail:",
+            value: "contato@suaigreja.com.br",
+            actionText: "Enviar Email",
+            onTap: () => _showSnackBar(context, "Abrindo cliente de e-mail..."),
+            screenWidth: screenWidth,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Constrói uma linha de contato individual com ação.
+  Widget _buildContactRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required String actionText,
+    required VoidCallback onTap,
+    required double screenWidth,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: kButtonColor, size: screenWidth * 0.06),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: screenWidth * 0.035,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: screenWidth * 0.045,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
-          ],
+          ),
         ),
-      ),
+        TextButton(
+          onPressed: onTap,
+          style: TextButton.styleFrom(
+            foregroundColor: kButtonColor,
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+          ),
+          child: Text(
+            actionText,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 
-  /// Clickable map image, opens maps app or Google Maps in browser.
-  Widget _buildClickableImageCard(
-    String imagePath,
-    String geoUrl,
-    String googleMapsUrl,
-    double cardHeight,
-    double cardRadius,
-    double cardBorder,
-  ) {
-    return GestureDetector(
-      onTap: () async {
-        if (await canLaunchUrl(Uri.parse(geoUrl))) {
-          await launchUrl(Uri.parse(geoUrl));
-        } else if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-          await launchUrl(Uri.parse(googleMapsUrl));
-        } else {
-          throw 'Could not launch $geoUrl or $googleMapsUrl';
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        height: cardHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(cardRadius),
-          border: Border.all(
-            color: const Color.fromARGB(255, 141, 59, 59),
-            width: cardBorder,
-          ),
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover,
-          ),
+  /// Constrói a seção de botões de redes sociais.
+  Widget _buildSocialMediaButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Botão Instagram
+        _buildSocialButton(
+          icon: Icons.photo_camera, // Placeholder para Instagram
+          label: "Instagram",
+          color: const Color(0xFFC13584), // Cor simulada do Instagram
+          onTap: () => _showSnackBar(context, "Abrindo Instagram..."),
         ),
-      ),
+        // Botão Facebook
+        _buildSocialButton(
+          icon: Icons.facebook, // Placeholder para Facebook
+          label: "Facebook",
+          color: const Color(0xFF4267B2), // Cor simulada do Facebook
+          onTap: () => _showSnackBar(context, "Abrindo Facebook..."),
+        ),
+        // Botão YouTube
+        _buildSocialButton(
+          icon: Icons.video_library, // Placeholder para YouTube
+          label: "YouTube",
+          color: const Color(0xFFFF0000), // Cor simulada do YouTube
+          onTap: () => _showSnackBar(context, "Abrindo Canal do YouTube..."),
+        ),
+      ],
     );
   }
 
-  /// Card with social media buttons (Facebook, Instagram, YouTube, Website).
-  Widget _buildSocialMediaCard({required double cardRadius}) {
-    return Card(
-      color: Colors.black.withOpacity(0.01),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(cardRadius),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-      elevation: 5,
+  /// Constrói um botão de rede social quadrado.
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Facebook
-                IconButton(
-                  onPressed: () async {
-                    await OurSocialContacts.openLink(
-                      context,
-                      'fb://profile/100064817646055',
-                      'https://www.facebook.com/profile.php?id=100064817646055',
-                      'Facebook',
-                    );
-                  },
-                  icon: Icon(MdiIcons.facebook),
-                  iconSize: 45,
-                  color: Colors.blue,
-                ),
-                // Instagram
-                IconButton(
-                  onPressed: () async {
-                    await OurSocialContacts.openLink(
-                      context,
-                      'instagram://user?username=oasisdebendiciongijon',
-                      'https://www.instagram.com/oasisdebendiciongijon/',
-                      'Instagram',
-                    );
-                  },
-                  icon: Icon(MdiIcons.instagram),
-                  iconSize: 45,
-                  color: Colors.pink,
-                ),
-                // YouTube
-                IconButton(
-                  onPressed: () async {
-                    await OurSocialContacts.openLink(
-                      context,
-                      'vnd.youtube://www.youtube.com/@oasisdebendiciongijon',
-                      'https://www.youtube.com/@oasisdebendiciongijon',
-                      'YouTube',
-                    );
-                  },
-                  icon: Icon(MdiIcons.youtube),
-                  iconSize: 55,
-                  color: Colors.red,
-                ),
-                // Website
-                IconButton(
-                  onPressed: () async {
-                    await OurSocialContacts.openLink(
-                      context,
-                      'https://www.oasisdebendicion.org/',
-                      'https://www.oasisdebendicion.org/',
-                      'Website',
-                    );
-                  },
-                  icon: Icon(MdiIcons.web),
-                  iconSize: 45,
-                  color: Colors.blue,
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(kCardBorderRadius),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(kCardBorderRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.3),
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Card with WhatsApp and phone buttons, and phone number displayed.
-  Widget _buildContactCard({required double cardRadius}) {
-    return Card(
-      color: Colors.black.withOpacity(0.01),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(cardRadius),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 5),
-            Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // WhatsApp button
-                _buildIconButton(
-                  url: kWhatsAppUrl,
-                  appUrl: kWhatsAppAppUrl,
-                  icon: MdiIcons.whatsapp,
-                  color: Colors.green,
-                  iconSize: 40,
-                ),
-                // Phone button
-                IconButton(
-                  onPressed: () async {
-                    if (await OurSocialContacts.requestPhonePermission()) {
-                      await launchUrl(Uri.parse(kPhoneUrl));
-                    } else {
-                      throw 'Could not launch $kPhoneUrl';
-                    }
-                  },
-                  icon: Icon(MdiIcons.phone),
-                  iconSize: 40,
-                ),
-                const SizedBox(width: 7),
-                // Display phone number
-                const Text(
-                  kPhoneNumber,
-                  style: TextStyle(fontSize: 22, color: Colors.white),
-                  textAlign: TextAlign.center,
-                  softWrap: true,
+                Icon(icon, color: Colors.white, size: 36),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  /// Generic icon button to open external apps or links (e.g., WhatsApp).
-  Widget _buildIconButton({
-    required String url,
-    required String appUrl,
-    required IconData icon,
-    required Color color,
-    required double iconSize,
-  }) {
-    return IconButton(
-      onPressed: () async {
-        if (await canLaunchUrl(Uri.parse(appUrl))) {
-          await launchUrl(
-            Uri.parse(appUrl),
-            mode: LaunchMode.externalApplication,
-          );
-        } else if (await canLaunchUrl(Uri.parse(url))) {
-          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-        } else {
-          throw 'Could not launch $url';
-        }
-      },
-      icon: Icon(icon),
-      iconSize: iconSize,
-      color: color,
-    );
-  }
-
-  /// Widget to display centered and styled titles.
-  Widget _buildTitle(String text, {double fontSize = 20, bool isBold = true}) {
-    return Center(
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: fontSize,
-          color: Colors.white,
-          fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        ),
-        textAlign: TextAlign.center,
+  /// Exibe uma SnackBar como feedback temporário.
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 1),
       ),
     );
   }

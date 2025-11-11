@@ -45,8 +45,8 @@ dependencies:
   package_info_plus: ^8.3.0
   audio_session: ^0.1.24
   audio_service: ^0.18.18
-
   http: ^1.5.0
+  youtube_player_flutter: ^9.1.3
 
 dev_dependencies:
 
@@ -76,6 +76,7 @@ flutter:
     - assets/vision.jpg
     - assets/santabiblia.jpg
     - assets/synergia.jpg
+    - assets/verse1.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
