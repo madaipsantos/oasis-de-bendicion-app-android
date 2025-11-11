@@ -7,8 +7,8 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 /// ===============================================
 /// CONFIGURAÇÕES DO YOUTUBE
 /// ===============================================
-const String kYoutubeApiKey = 'AIzaSyBKJ3PwmupeEx4z0pMYidx7_yG9GfxzK84';
-const String kChannelId = 'UC4nJ_qBjgm3p1r27pYI3F_g';
+const String kYoutubeApiKey = '';
+const String kChannelId = '';
 
 /// ===============================================
 /// ESTILO VISUAL
