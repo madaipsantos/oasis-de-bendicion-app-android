@@ -47,13 +47,6 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     _initializeActions();
   }
 
-  /// Exibe uma SnackBar como feedback temporário
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 1)),
-    );
-  }
-
   /// Inicializa as ações principais da tela.
   void _initializeActions() {
     _actions = [      
@@ -125,7 +118,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
       onTap: action.onTap,
       borderRadius: BorderRadius.circular(kCardRadius),
       child: Container(
-        padding: const EdgeInsets.all(kCardBorder),
+        padding: const EdgeInsets.all(kCardBorder * 0.7), // Reducido el padding
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -174,7 +167,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
     double spacing = kScreenPadding / 2;
     double aspectRatio = MediaQuery.of(context).size.aspectRatio;
     // Ajustar el aspect ratio para diferentes tamaños de pantalla
-    double childAspectRatio = aspectRatio < 1.0 ? 1.5 : 1.8;
+    double childAspectRatio = aspectRatio < 1.0 ? 1.8 : 2.2; // Aumentado para hacer los cards menos altos
 
     return GridView.count(
       shrinkWrap: true,
