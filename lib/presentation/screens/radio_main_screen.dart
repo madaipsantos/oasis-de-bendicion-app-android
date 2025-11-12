@@ -334,7 +334,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
           icon: MdiIcons.whatsapp,
           color: Colors.green,
           onPressed: () async {
-            const String phone = '+34614126301';
+            const String phone = '34614126301'; 
             const String message = "Bendiciones...";
             await OurSocialContacts.openLink(
               context,
