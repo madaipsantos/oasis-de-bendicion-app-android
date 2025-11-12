@@ -8,7 +8,7 @@ class ChurchServicesScreen extends StatelessWidget {
   const ChurchServicesScreen({super.key});
 
   Widget _buildAgendaItem(
-      String day, String title, String time, IconData icon, double width) {
+      String day, String title, String time, IconData icon, double width, Color iconColor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -19,7 +19,9 @@ class ChurchServicesScreen extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
+            // ignore: deprecated_member_use
             Colors.black.withOpacity(0.7),
+            // ignore: deprecated_member_use
             Colors.black.withOpacity(0.5),
           ],
         ),
@@ -33,7 +35,7 @@ class ChurchServicesScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: width * 0.07, color: Colors.red.shade400),
+          Icon(icon, size: width * 0.07, color: iconColor),
           const SizedBox(width: 16),
 
           // Textos
@@ -182,17 +184,17 @@ class ChurchServicesScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   _buildAgendaItem(
-                      "DOM", "Culto Dominical", "12:00h", Icons.church, width),
+                      "DOM", "Culto Dominical", "12:00h", Icons.church, width, Colors.red.shade400),
                   _buildAgendaItem(
-                      "MAR", "Culto de Oración", "20:00h", Icons.self_improvement, width),
+                      "MAR", "Culto de Oración", "20:00h", Icons.self_improvement, width, Colors.purple.shade400),
                   _buildAgendaItem(
-                      "MIÉ", "Oración de la Mañana", "06:00h", Icons.wb_sunny, width),
+                      "MIÉ", "Oración de la Mañana", "06:00h", Icons.wb_sunny, width, Colors.orange.shade400),
                   _buildAgendaItem(
-                      "JUE", "Estudio Bíblico", "20:00h", Icons.school, width),
+                      "JUE", "Estudio Bíblico", "20:00h", Icons.school, width, Colors.green.shade400),
                   _buildAgendaItem(
-                      "VIE", "Reunión de Jóvenes", "20:00h - (Confirmar Programación)", Icons.handshake, width),
+                      "VIE", "Reunión de Jóvenes", "20:00h - (Confirmar Programación)", Icons.handshake, width, Colors.blue.shade400),
                   _buildAgendaItem(
-                      "VIE", "Reunión de Mujeres", "20:00h - (Confirmar Programación)", Icons.handshake, width),
+                      "VIE", "Reunión de Mujeres", "20:00h - (Confirmar Programación)", Icons.handshake, width, Colors.pink.shade400),
                 ],
               ),
             ),
