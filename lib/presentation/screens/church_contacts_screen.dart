@@ -10,8 +10,6 @@ const Color kButtonColor = Colors.red;
 const double kScreenPadding = 20.0;
 const double kCardBorderRadius = 10.0; // Mantendo o valor do layout base (10.0)
 const String kPhoneUrl = "tel:+34614126301";
-const String kWhatsAppAppUrl = 'whatsapp://send?phone=+34614126301&text=';
-const String kWhatsAppUrl = 'https://wa.me/+34614126301?text=';
 
 /// Tela dedicada aos Contatos e Redes Sociais da Igreja.
 class ContactScreen extends StatelessWidget {
@@ -217,20 +215,14 @@ class ContactScreen extends StatelessWidget {
             value: "(34) 6141-26301",
             actionText: "Mensaje",
             onPressed: () async {
-              if (await canLaunchUrl(Uri.parse(kWhatsAppAppUrl))) {
-                await launchUrl(
-                  Uri.parse(kWhatsAppAppUrl),
-                  mode: LaunchMode.externalApplication,
-                );
-              } else if (await canLaunchUrl(Uri.parse(kWhatsAppUrl))) {
-                await launchUrl(
-                  Uri.parse(kWhatsAppUrl),
-                  mode: LaunchMode.externalApplication,
-                );
-                return;
-              } else {
-                throw 'Could not launch $kWhatsAppUrl';
-              }
+              const String phone = '34614126301';
+              const String message = "Bendiciones...";
+              await OurSocialContacts.openLink(
+                context,
+                'whatsapp://send?phone=$phone&text=${Uri.encodeComponent(message)}',
+                'https://wa.me/$phone?text=${Uri.encodeComponent(message)}',
+                'WhatsApp',
+              );
             },
             screenWidth: screenWidth,
           ),
@@ -421,14 +413,14 @@ class ContactScreen extends StatelessWidget {
                 Icon(
                   icon,
                   color: const Color.fromARGB(255, 227, 224, 224),
-                  size: 28,
+                  size: 25,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   label,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                   ),
                 ),
               ],

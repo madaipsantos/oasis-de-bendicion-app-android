@@ -19,28 +19,71 @@ class OurSocialContacts {
     String appName,
   ) async {
     try {
+      // Intentar abrir la app nativa primero
       if (await canLaunchUrl(Uri.parse(appUrl))) {
-        await launchUrl(Uri.parse(appUrl), mode: LaunchMode.externalApplication);
-      } else if (await canLaunchUrl(Uri.parse(webUrl))) {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      } else {
-        if (context.mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Erro'),
-              content: Text('Não foi possível abrir o $appName.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
+        final launched = await launchUrl(
+          Uri.parse(appUrl), 
+          mode: LaunchMode.externalApplication
+        );
+        if (launched) return;
+      }
+      
+      // Si falla, intentar la URL web
+      if (await canLaunchUrl(Uri.parse(webUrl))) {
+        final launched = await launchUrl(
+          Uri.parse(webUrl), 
+          mode: LaunchMode.externalApplication
+        );
+        if (launched) return;
+      }
+      
+      // Si ambas fallan, mostrar mensaje específico
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('$appName no disponible'),
+            content: Text(
+              appName == 'WhatsApp' 
+                ? 'WhatsApp no está instalado.\n\n¿Deseas instalarlo desde Google Play Store?'
+                : 'No se pudo abrir $appName.\n\nVerifica que esté instalado en tu dispositivo.'
             ),
-          );
-        }
+            actions: [
+              if (appName == 'WhatsApp')
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await launchUrl(
+                      Uri.parse('https://play.google.com/store/apps/details?id=com.whatsapp'),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                  child: const Text('Instalar'),
+                ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancelar'),
+              ),
+            ],
+          ),
+        );
       }
     } catch (e, stackTrace) {
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Error al abrir $appName: ${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
       throw SocialContactsException(
         'Failed to open link for $appName',
         error: e,
