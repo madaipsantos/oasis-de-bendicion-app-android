@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:webradiooasis/core/utils/our_social_contacts.dart';
 // Importação simulada para ícones de redes sociais (em um projeto real, você usaria 'font_awesome_flutter')
 // Usaremos os ícones padrões do Material para manter a compatibilidade no Canvas.
 
@@ -7,6 +9,9 @@ const Color kCardColor = Color.fromARGB(255, 141, 59, 59); // Cor principal
 const Color kButtonColor = Colors.red;
 const double kScreenPadding = 20.0;
 const double kCardBorderRadius = 10.0; // Mantendo o valor do layout base (10.0)
+const String kPhoneUrl = "tel:+34614126301";
+const String kWhatsAppAppUrl = 'whatsapp://send?phone=+34614126301&text=';
+const String kWhatsAppUrl = 'https://wa.me/+34614126301?text=';
 
 /// Tela dedicada aos Contatos e Redes Sociais da Igreja.
 class ContactScreen extends StatelessWidget {
@@ -76,71 +81,72 @@ class ContactScreen extends StatelessWidget {
                     ),
                   ),
                   Container(
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          height: 1.5,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.red.shade400.withOpacity(0.2),
-                                Colors.red.shade400.withOpacity(0.7),
-                                Colors.red.shade400.withOpacity(0.2),
-                              ],
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            height: 1.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red.shade400.withOpacity(0.2),
+                                  Colors.red.shade400.withOpacity(0.7),
+                                  Colors.red.shade400.withOpacity(0.2),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade400.withOpacity(0.6),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          height: 1.5,
+                        Container(
+                          width: 8,
+                          height: 8,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.red.shade400.withOpacity(0.2),
-                                Colors.red.shade400.withOpacity(0.7),
-                                Colors.red.shade400.withOpacity(0.2),
-                              ],
+                            color: Colors.red.shade400.withOpacity(0.6),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            height: 1.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red.shade400.withOpacity(0.2),
+                                  Colors.red.shade400.withOpacity(0.7),
+                                  Colors.red.shade400.withOpacity(0.2),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
+                  SizedBox(height: 10),
 
                   // -----------------------------------------------------------
                   // 1. CARTÃO DE INFORMAÇÕES DE CONTATO
                   // -----------------------------------------------------------
                   _buildContactInfoCard(screenWidth, context),
-                  
+
                   const SizedBox(height: 30),
 
                   // -----------------------------------------------------------
                   // 2. TÍTULO REDES SOCIAIS
                   // -----------------------------------------------------------
                   Text(
-                    "Síguenos en las redes sociales.",
+                    "¡Ven a seguirnos y ser parte de nuestra comunidad!.",
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: screenWidth * 0.06,
+                      fontSize: screenWidth * 0.04,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 25),
 
                   // -----------------------------------------------------------
                   // 3. BOTÕES DE REDES SOCIAIS
@@ -163,7 +169,10 @@ class ContactScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
-        border: Border.all(color: Color.fromARGB(255, 141, 59, 59).withOpacity(0.5), width: 1.2),
+        border: Border.all(
+          color: Color.fromARGB(255, 141, 59, 59).withOpacity(0.5),
+          width: 1.2,
+        ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -185,30 +194,57 @@ class ContactScreen extends StatelessWidget {
           // Telefone (Simulando ligação direta)
           _buildContactRow(
             icon: Icons.phone,
-            label: "Telefone (Ligação):",
-            value: "(XX) XXXX-XXXX",
+            label: "Telefone (Llamada):",
+            value: "(34) 6141-26301",
             actionText: "Ligar",
-            onTap: () => _showSnackBar(context, "Abrindo discador para (XX) XXXX-XXXX"),
+            onPressed: () async {
+              if (await OurSocialContacts.requestPhonePermission()) {
+                await launchUrl(Uri.parse(kPhoneUrl));
+              } else {
+                throw 'Could not launch $kPhoneUrl';
+              }
+            },
             screenWidth: screenWidth,
           ),
-          const Divider(color: Colors.white24, height: 25), // Divisor após Ligar
+          const Divider(
+            color: Colors.white24,
+            height: 25,
+          ), // Divisor após Ligar
           // WhatsApp (Simulando envio de mensagem) - NOVO!
           _buildContactRow(
             icon: Icons.chat_bubble_outline, // Ícone de chat para WhatsApp
-            label: "WhatsApp (Mensagem):",
-            value: "(XX) XXXX-XXXX",
-            actionText: "Mensagem",
-            onTap: () => _showSnackBar(context, "Abrindo WhatsApp para enviar mensagem..."),
+            label: "WhatsApp (Mensaje):",
+            value: "(34) 6141-26301",
+            actionText: "Mensaje",
+            onPressed: () async {
+              if (await canLaunchUrl(Uri.parse(kWhatsAppAppUrl))) {
+                await launchUrl(
+                  Uri.parse(kWhatsAppAppUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+              } else if (await canLaunchUrl(Uri.parse(kWhatsAppUrl))) {
+                await launchUrl(
+                  Uri.parse(kWhatsAppUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+                return;
+              } else {
+                throw 'Could not launch $kWhatsAppUrl';
+              }
+            },
             screenWidth: screenWidth,
           ),
-          const Divider(color: Colors.white24, height: 25), // Divisor antes do Email
+          const Divider(
+            color: Colors.white24,
+            height: 25,
+          ), // Divisor antes do Email
           // Email (Simulando envio de email)
           _buildContactRow(
             icon: Icons.email,
             label: "E-mail:",
-            value: "contato@suaigreja.com.br",
-            actionText: "Enviar Email",
-            onTap: () => _showSnackBar(context, "Abrindo cliente de e-mail..."),
+            value: "oasisdebendicion2020@hotmail.com",
+            actionText: "",
+            onPressed: () => {},
             screenWidth: screenWidth,
           ),
         ],
@@ -222,7 +258,7 @@ class ContactScreen extends StatelessWidget {
     required String label,
     required String value,
     required String actionText,
-    required VoidCallback onTap,
+    required VoidCallback onPressed,
     required double screenWidth,
   }) {
     return Row(
@@ -254,7 +290,7 @@ class ContactScreen extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: onTap,
+          onPressed: onPressed,
           style: TextButton.styleFrom(
             foregroundColor: kButtonColor,
             padding: EdgeInsets.zero,
@@ -278,22 +314,76 @@ class ContactScreen extends StatelessWidget {
         _buildSocialButton(
           icon: Icons.photo_camera, // Placeholder para Instagram
           label: "Instagram",
-          color: const Color(0xFFC13584), // Cor simulada do Instagram
-          onTap: () => _showSnackBar(context, "Abrindo Instagram..."),
+          color: const Color.fromARGB(
+            255,
+            27,
+            11,
+            11,
+          ), // Cor simulada do Instagram
+          onPressed: () async {
+            await OurSocialContacts.openLink(
+              context,
+              'instagram://user?username=oasisdebendiciongijon',
+              'https://www.instagram.com/oasisdebendiciongijon/',
+              'Instagram',
+            );
+          },
         ),
         // Botão Facebook
         _buildSocialButton(
           icon: Icons.facebook, // Placeholder para Facebook
           label: "Facebook",
-          color: const Color(0xFF4267B2), // Cor simulada do Facebook
-          onTap: () => _showSnackBar(context, "Abrindo Facebook..."),
+          color: const Color.fromARGB(
+            255,
+            27,
+            11,
+            11,
+          ), // Cor simulada do Facebook
+          onPressed: () async {
+            await OurSocialContacts.openLink(
+              context,
+              'fb://profile/100064817646055',
+              'https://www.facebook.com/profile.php?id=100064817646055',
+              'Facebook',
+            );
+          },
         ),
         // Botão YouTube
         _buildSocialButton(
           icon: Icons.video_library, // Placeholder para YouTube
           label: "YouTube",
-          color: const Color(0xFFFF0000), // Cor simulada do YouTube
-          onTap: () => _showSnackBar(context, "Abrindo Canal do YouTube..."),
+          color: const Color.fromARGB(
+            255,
+            27,
+            11,
+            11,
+          ), // Cor simulada do YouTube
+          onPressed: () async {
+            await OurSocialContacts.openLink(
+              context,
+              'vnd.youtube://www.youtube.com/@oasisdebendiciongijon',
+              'https://www.youtube.com/@oasisdebendiciongijon',
+              'YouTube',
+            );
+          },
+        ),
+        _buildSocialButton(
+          icon: Icons.language, // Placeholder para YouTube
+          label: "Website",
+          color: const Color.fromARGB(
+            255,
+            27,
+            11,
+            11,
+          ), // Cor simulada do YouTube
+          onPressed: () async {
+            await OurSocialContacts.openLink(
+              context,
+              'https://www.oasisdebendicion.org/',
+              'https://www.oasisdebendicion.org/',
+              'Website',
+            );
+          },
         ),
       ],
     );
@@ -304,13 +394,13 @@ class ContactScreen extends StatelessWidget {
     required IconData icon,
     required String label,
     required Color color,
-    required VoidCallback onTap,
+    required VoidCallback onPressed,
   }) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: InkWell(
-          onTap: onTap,
+          onTap: onPressed,
           borderRadius: BorderRadius.circular(kCardBorderRadius),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -328,7 +418,11 @@ class ContactScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: Colors.white, size: 36),
+                Icon(
+                  icon,
+                  color: const Color.fromARGB(255, 227, 224, 224),
+                  size: 28,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   label,
@@ -341,16 +435,6 @@ class ContactScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  /// Exibe uma SnackBar como feedback temporário.
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 1),
       ),
     );
   }
