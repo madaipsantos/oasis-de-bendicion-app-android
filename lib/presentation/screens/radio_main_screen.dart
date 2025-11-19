@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:disable_battery_optimizations_latest/disable_battery_optimizations_latest.dart';
 import 'package:webradiooasis/config/router/app_router.dart';
+import 'package:webradiooasis/core/utils/battery_utils.dart';
 import 'package:webradiooasis/infrastructure/services/connection_service.dart';
 import '../providers/audio_player_provider.dart';
 
@@ -58,7 +60,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
   void _initializeRadioActions() {
     _radioActions = [
       RadioAction(
-        title: "Servicios",
+        title: "Programas Radiales",
         icon: Icons.calendar_month,
         onTap: () {
           Navigator.pushNamed(context, AppRouter.services);
@@ -123,6 +125,36 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
         setState(() => _hasConnection = true);
       }
     });
+  }
+
+  /// Verifica y maneja la optimización de batería
+  Future<void> _checkBatteryOptimization() async {
+    try {
+      await BatteryUtils.handleBatteryOptimization(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.warning, color: Colors.white),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text('Error al verificar configuración de batería'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   void _onItemTapped(int index) {
@@ -281,6 +313,49 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
         backgroundColor: Colors.black,
         elevation: 4,
         centerTitle: true,
+        actions: [
+          // Indicador visual del estado de optimización de batería
+          FutureBuilder<bool?>(
+            future: DisableBatteryOptimizationLatest.isBatteryOptimizationDisabled,
+            builder: (context, snapshot) {
+              // Solo muestra el ícono si la optimización NO está deshabilitada
+              if (snapshot.hasData && snapshot.data == false) {
+                return Container(
+                  margin: EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    onPressed: () => _checkBatteryOptimization(),
+                    icon: Stack(
+                      children: [
+                        Icon(
+                          Icons.battery_alert,
+                          color: Colors.orange,
+                          size: 28,
+                        ),
+                        // Pequeño punto pulsante para llamar más la atención
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    tooltip: 'Optimizar batería para mejor rendimiento',
+                    splashRadius: 24,
+                  ),
+                );
+              }
+              // Si ya está configurado o estamos cargando, no mostrar nada
+              return SizedBox.shrink();
+            },
+          ),
+        ],
       );
 
   Widget _buildBottomNavigationBar() => BottomNavigationBar(
