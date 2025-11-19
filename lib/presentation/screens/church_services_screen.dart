@@ -91,8 +91,8 @@ class ChurchServicesScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Oasis de Bendición",
-            style: TextStyle(fontSize: kAppBarFontSize, fontWeight: FontWeight.bold)),
+        title: const Text("Servicios",
+            style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.black,
         elevation: 0,

@@ -81,7 +81,7 @@ class _CultTransmissionsScreenState extends State<CultTransmissionsScreen> {
   bool _loadingLive = true;
   bool _loadingVideos = true;
   List<Map<String, dynamic>> _recentVideos = [];
-  String _currentTitle = "Culto ao Vivo";
+  String _currentTitle = "Culto en Directo";
 
   String _getNextTransmissionTime() {
     final now = DateTime.now();

@@ -24,7 +24,6 @@ class ContactScreen extends StatelessWidget {
         title: const Text(
           "Contato e Redes",
           style: TextStyle(
-            fontSize: 22.0,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),

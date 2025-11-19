@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Constantes copiadas da tela principal para garantir a consistência
 const Color kCardColor = Color.fromARGB(255, 141, 59, 59); // Cor principal
 const Color kButtonColor = Colors.red;
 const double kScreenPadding = 20.0;
 const double kCardBorderRadius = 10.0; // Mantendo o valor do layout base (10.0)
+
+// Constantes de ubicación de la iglesia
+const String kGeoUrl =
+    "geo:43.5322026,-5.6611196?q=Carretera Carbonara, 2227. Gijón, Asturias - España";
+const String kGoogleMapsUrl =
+    "https://www.google.com/maps/search/?api=1&query=Carretera+Carbonara,+2227,+Gij%C3%B3n,+Asturias+-+Espa%C3%B1a";
+const String kChurchAddress = "Carretera Carbonara, 2227. Gijón, Asturias - España";
 
 /// Tela dedicada à Localização, Endereço e Horários de Serviço da Igreja.
 class LocationScreen extends StatelessWidget {
@@ -17,9 +25,8 @@ class LocationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Donde Estamos",
+          "Dirección",
           style: TextStyle(
-            fontSize: 22.0,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -56,10 +63,109 @@ class LocationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Título de la sección
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Text(
+                      "Dirección",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenWidth * 0.080,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(0, 2),
+                            blurRadius: 4,
+                            color: Colors.black.withOpacity(0.5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Separador decorativo
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            height: 1.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red.shade400.withOpacity(0.2),
+                                  Colors.red.shade400.withOpacity(0.7),
+                                  Colors.red.shade400.withOpacity(0.2),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade400.withOpacity(0.6),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 15),
+                            height: 1.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red.shade400.withOpacity(0.2),
+                                  Colors.red.shade400.withOpacity(0.7),
+                                  Colors.red.shade400.withOpacity(0.2),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   // -----------------------------------------------------------
-                  // 1. Placeholder do Mapa
+                  // 1. Imagen del Mapa
                   // -----------------------------------------------------------
-                  _buildMapPlaceholder(screenWidth),
+                  Container(
+                    alignment: Alignment.center,
+                    height: screenWidth * 0.6, // Altura responsiva
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 141, 59, 59).withOpacity(0.5),
+                        width: 1.2,
+                      ),
+                      color: Colors.black54,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Opacity(
+                        opacity: 0.8, // Opacidad del mapa
+                        child: Image.asset(
+                          'assets/mapa.png',
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
 
                   // -----------------------------------------------------------
                   // 2. Informações de Endereço e Contato
@@ -69,26 +175,30 @@ class LocationScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
+                        
                         // Cartão principal com Endereço e Horários
                         _buildInfoCard(
                           context: context,
-                          title: "Dirección del Templo",
-                          address: "Carretera Carbonera, 2227",
-                          city: "Gijon, Asturias, España",
+                          address: "Carretera Carbonera, 2227. Gijón, Asturias - España",
                           screenWidth: screenWidth,
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 30),
 
                         // Botão de Rota (Ação externa)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton.icon(
-                              onPressed: () {
-                                _showSnackBar(context, "Abrindo Google Maps com a rota...");
-                                // Em um app real: launchUrl(Uri.parse('googlemaps://...'));
+                              onPressed: () async {
+                                if (await canLaunchUrl(Uri.parse(kGoogleMapsUrl))) {
+                                  await launchUrl(
+                                    Uri.parse(kGoogleMapsUrl),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                } else {
+                                  _showSnackBar(context, "No se pudo abrir Google Maps.");
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(2255, 189, 52, 42),
@@ -100,7 +210,7 @@ class LocationScreen extends StatelessWidget {
                               ),
                               icon: const Icon(Icons.near_me, color: Colors.white),
                               label: const Text(
-                                "Traçar Rota no Mapa",
+                                "Ruta en el mapa",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
@@ -123,42 +233,10 @@ class LocationScreen extends StatelessWidget {
     );
   }
 
-  /// Constrói o placeholder do Mapa (simulando a visualização)
-  Widget _buildMapPlaceholder(double screenWidth) {
-    return Container(
-      height: screenWidth * 0.7, // Altura responsiva
-      decoration: const BoxDecoration(
-        color: Colors.black54,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.map,
-              color: kButtonColor,
-              size: screenWidth * 0.2,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Visualização do Mapa (Placeholder)",
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: screenWidth * 0.04,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   /// Constrói o cartão de informações detalhadas (Endereço e Horários)
   Widget _buildInfoCard({
     required BuildContext context,
-    required String title,
     required String address,
-    required String city,
     required double screenWidth,
   }) {
     return Container(
@@ -185,28 +263,11 @@ class LocationScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color.fromARGB(255, 141, 59, 59),
-              fontSize: screenWidth * 0.05,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const Divider(color: Colors.white24, height: 20),
-          
+        children: [      
           // Endereço
           _buildInfoRow(
             icon: Icons.pin_drop,
             text: address,
-            isBold: false,
-            screenWidth: screenWidth,
-          ),
-          _buildInfoRow(
-            icon: Icons.location_city,
-            text: city,
             isBold: false,
             screenWidth: screenWidth,
           ),
@@ -225,24 +286,16 @@ class LocationScreen extends StatelessWidget {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white70, size: screenWidth * 0.045),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.04,
-                fontWeight: isBold ? FontWeight.w500 : FontWeight.normal,
-              ),
-            ),
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: screenWidth * 0.04,
+            fontWeight: isBold ? FontWeight.w500 : FontWeight.normal,
           ),
-        ],
+        ),
       ),
     );
   }

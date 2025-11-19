@@ -86,7 +86,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
         },
       ),
       ChurchAction(
-        title: "Ubicación",
+        title: "Dirección",
         icon: Icons.location_on,
         onTap: () {
           Navigator.pushNamed(context, AppRouter.location);
