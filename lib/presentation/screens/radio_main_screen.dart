@@ -39,16 +39,36 @@ class RadioMainScreen extends StatefulWidget {
   State<RadioMainScreen> createState() => _RadioMainScreenState();
 }
 
-class _RadioMainScreenState extends State<RadioMainScreen> {
+class _RadioMainScreenState extends State<RadioMainScreen> 
+    with SingleTickerProviderStateMixin {
   final int _selectedIndex = kRadioTabIndex;
   bool _hasConnection = true;
   bool _checkingConnection = true;
   Timer? _connectionMonitorTimer;
   late List<RadioAction> _radioActions;
+  
+  // Variables para la animación de pulso
+  late AnimationController _pulseAnimationController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+    
+    // Inicializar controlador de animación de pulso
+    _pulseAnimationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(
+      parent: _pulseAnimationController,
+      curve: Curves.easeInOut,
+    ));
+    
     final audioPlayerProvider = Provider.of<AudioPlayerProvider>(context, listen: false);
     audioPlayerProvider.initAudioService();
     _initializeRadioActions();
@@ -244,6 +264,7 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
   @override
   void dispose() {
     _connectionMonitorTimer?.cancel();
+    _pulseAnimationController.dispose();
     super.dispose();
   }
 
@@ -372,11 +393,35 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
 
   Widget _buildPlayerControls(AudioPlayerProvider provider) => Column(
         children: [
-          IconButton(
-            onPressed: _hasConnection ? () => provider.togglePlayPause() : null,
-            icon: Icon(provider.isPlaying ? MdiIcons.pause : MdiIcons.play),
-            iconSize: 60,
-            color: Colors.redAccent,
+          // Botón con animación de pulso suave y brillo
+          AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              // Controlar la animación basado en el estado de reproducción
+              if (provider.isPlaying && !_pulseAnimationController.isAnimating) {
+                _pulseAnimationController.repeat(reverse: true);
+              } else if (!provider.isPlaying && _pulseAnimationController.isAnimating) {
+                _pulseAnimationController.stop();
+                _pulseAnimationController.reset();
+              }
+
+              return Transform.scale(
+                scale: provider.isPlaying ? _pulseAnimation.value : 1.0,
+                child: IconButton(
+                  onPressed: _hasConnection ? () => provider.togglePlayPause() : null,
+                  icon: Icon(provider.isPlaying ? MdiIcons.pause : MdiIcons.play),
+                  iconSize: 60,
+                  // Cambio de color animado usando los colores de la app
+                  color: provider.isPlaying 
+                    ? Color.lerp(
+                        Colors.redAccent,              // Color principal de la app
+                        const Color.fromARGB(255, 141, 59, 59), // kBorderColor de la app
+                        _pulseAnimation.value,
+                      )
+                    : Colors.redAccent, // Color normal cuando está parado
+                ),
+              );
+            },
           ),
           const SizedBox(height: 10),
           const Text(
@@ -419,9 +464,9 @@ class _RadioMainScreenState extends State<RadioMainScreen> {
               );
             },
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           _buildDecorativeDivider(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           _buildRadioActionCards(MediaQuery.of(context).size.width),
         ],
       );
