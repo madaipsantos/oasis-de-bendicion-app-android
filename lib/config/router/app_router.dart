@@ -6,6 +6,7 @@ import 'package:webradiooasis/presentation/screens/church_vision_mission_screen.
 import 'package:webradiooasis/presentation/screens/church_services_screen.dart';
 import 'package:webradiooasis/presentation/screens/church_contacts_screen.dart';
 import 'package:webradiooasis/presentation/screens/cult_transmission_screen.dart';
+import 'package:webradiooasis/presentation/screens/radio_contacts_screen.dart';
 import 'package:webradiooasis/presentation/screens/radio_main_screen.dart';
 import 'package:webradiooasis/presentation/screens/radio_programs_screen.dart';
 
@@ -22,6 +23,7 @@ class AppRouter {
   static const String cultTransmissions = '/cult-transmissions';
   static const String location = '/location';
   static const String prayerRequests = '/prayer-requests';
+  static const String contactsRadio = '/contacts-radio';
 
   /// Returns the app's route map for use in MaterialApp
   static Map<String, WidgetBuilder> get routes => {
@@ -34,5 +36,6 @@ class AppRouter {
         cultTransmissions: (context) => const CultTransmissionsScreen(),
         location: (context) => const LocationScreen(),
         prayerRequests: (context) => const PrayerRequestScreen(),
+        contactsRadio: (context) => const ContactsRadioScreen(),
       };
 }

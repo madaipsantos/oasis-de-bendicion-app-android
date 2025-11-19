@@ -373,6 +373,7 @@ class _ChurchMainScreenState extends State<ChurchMainScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 10),
                   _buildActionGrid(MediaQuery.of(context).size.width),
                 ],
               ),

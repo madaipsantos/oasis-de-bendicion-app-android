@@ -90,7 +90,7 @@ class _RadioMainScreenState extends State<RadioMainScreen>
         title: "Contactos/Redes sociales",
         icon: Icons.phone,
         onTap: () {
-          Navigator.pushNamed(context, AppRouter.contacts);
+          Navigator.pushNamed(context, AppRouter.contactsRadio);
         },
       ),
     ];
