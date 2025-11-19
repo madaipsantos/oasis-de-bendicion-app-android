@@ -9,6 +9,7 @@ const Color kCardColor = Color.fromARGB(255, 141, 59, 59); // Cor principal
 const Color kButtonColor = Colors.red;
 const double kScreenPadding = 20.0;
 const double kCardBorderRadius = 10.0; // Mantendo o valor do layout base (10.0)
+const double kAppBarFontSize = 24.0; // Reducido para que sea igual al tamaño por defecto
 const String kPhoneUrl = "tel:+34614126301";
 
 /// Tela dedicada aos Contatos e Redes Sociais da Igreja.
@@ -22,11 +23,8 @@ class ContactScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Contato e Redes",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          "Contato e Redes (Iglesia)",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
         elevation: 0,

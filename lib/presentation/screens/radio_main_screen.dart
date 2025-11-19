@@ -83,7 +83,7 @@ class _RadioMainScreenState extends State<RadioMainScreen>
         title: "Programas Radiales",
         icon: Icons.calendar_month,
         onTap: () {
-          Navigator.pushNamed(context, AppRouter.services);
+          Navigator.pushNamed(context, AppRouter.radioPrograms);
         },
       ),
       RadioAction(
@@ -283,7 +283,6 @@ class _RadioMainScreenState extends State<RadioMainScreen>
               image: DecorationImage(
                 image: AssetImage(kRadioBackgroundImage),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
               ),
             ),
           ),
@@ -415,7 +414,7 @@ class _RadioMainScreenState extends State<RadioMainScreen>
                   color: provider.isPlaying 
                     ? Color.lerp(
                         Colors.redAccent,              // Color principal de la app
-                        const Color.fromARGB(255, 141, 59, 59), // kBorderColor de la app
+                        const Color.fromARGB(255, 239, 139, 139), // kBorderColor de la app
                         _pulseAnimation.value,
                       )
                     : Colors.redAccent, // Color normal cuando está parado
@@ -423,7 +422,7 @@ class _RadioMainScreenState extends State<RadioMainScreen>
               );
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           const Text(
             'Reproduciendo:',
             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
@@ -440,8 +439,8 @@ class _RadioMainScreenState extends State<RadioMainScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.black.withOpacity(0.7),
-                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.10),
+                      Colors.black.withOpacity(0.10),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(kCardRadius),

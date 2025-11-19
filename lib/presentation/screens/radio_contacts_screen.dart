@@ -22,7 +22,7 @@ class ContactsRadioScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Contato e Redes",
+          "Contato e Redes (Radio)",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
